@@ -7,100 +7,106 @@
         <div class="row">
 
             <div id="common-home">
-                <div class="product-tab-block  box">
+                <div class="product-tab-block box">
                     <div class="container">
-                        <div class="main-tab">
+                        <div class="related-products-block" style="margin-top: -50px;">
+                            <div class="box-content box">
 
-                            <div class="related-products-block">
-                                <div class="box-content box">
+                                <div class="page-title">
+                                    <h3 class="grainger-main-heading">Məhsullar</h3>
+                                </div>
 
-                                    <div class="page-title">
-                                        <h3>Products</h3>
-                                    </div>
+                                <div class="row display-flex-row">
+                                    @foreach($products as $data)
+                                        @php
+                                            $translation = $data->translations->where('locale', app()->getLocale())->first()
+                                                ?? $data->translations->where('locale', 'az')->first();
 
-                                    <div class="row">
+                                            $name = $translation->name ?? $data->name;
+                                            $price = $data->retail_price;
 
-                                        @foreach($products as $data)
+                                            if (
+                                                auth()->guard('company')->check() &&
+                                                auth()->guard('company')->user()->price_type === 'wholesale'
+                                            ) {
+                                                $price = $data->wholesale_price;
+                                            }
 
-                                            @php
-                                                $translation = $data->translations->where('locale', app()->getLocale())->first()
-                                                    ?? $data->translations->where('locale', 'az')->first();
+                                            $img = optional($data->images->first())->image;
+                                        @endphp
 
-                                                $name = $translation->name ?? $data->name;
-                                                $description = $translation->description ?? $data->description;
+                                        <div class="col-xs-12 col-sm-6 col-md-4 product-layout">
+                                            <div class="grainger-product-card" data-product-id="{{ $data->id }}">
 
-                                                // DEFAULT retail price
-                                                $price = $data->retail_price;
+                                                {{-- SOL HİSSƏ: ŞƏKİL --}}
+                                                <div class="grainger-img-wrapper">
+                                                    <a href="{{ route('web.product.show', $data->id) }}">
+                                                        @if($img)
+                                                            <img src="{{ asset('storage/'.$img) }}" class="img-responsive"
+                                                                 alt="{{ $name }}">
+                                                        @else
+                                                            <img src="{{ asset('web/image/no-image.png') }}"
+                                                                 class="img-responsive" alt="{{ $name }}">
+                                                        @endif
+                                                    </a>
+                                                </div>
 
-                                                // company login + wholesale check
-                                                if (
-                                                    auth()->guard('company')->check() &&
-                                                    auth()->guard('company')->user()->price_type === 'wholesale'
-                                                ) {
-                                                    $price = $data->wholesale_price;
-                                                }
+                                                {{-- SAĞ HİSSƏ: MƏLUMATLAR --}}
+                                                <div class="grainger-info-wrapper">
 
-                                                $img = optional($data->images->first())->image;
-                                            @endphp
+                                                    <div class="grainger-top-meta">
+                                                <span class="grainger-brand"><span class="grainger-brand">
+    {{ $data->category?->translations
+        ->firstWhere('locale', app()->getLocale())
+        ?->name
+        ?? $data->category?->translations->firstWhere('locale', 'az')?->name }}
+</span></span>
+                                                        <h4 class="grainger-title">
+                                                            <a href="{{ route('web.product.show', $data->id) }}">{{ $name }}</a>
+                                                        </h4>
+                                                        <div class="grainger-sku">Məhsul kodu {{ $data->code ?? '' }}</div>
+                                                    </div>
 
-                                            <div class="product-layout col-xs-12 col-sm-6 col-md-3">
-
-                                                <div class="custom-product-card">
-
-                                                    {{-- IMAGE --}}
-                                                    <div class="product-img-wrapper">
-                                                        <a href="{{ route('web.product.show', $data->id) }}">
-
-                                                            @if($img)
-                                                                <img src="{{ asset('storage/'.$img) }}"
-                                                                     class="img-responsive main-img"
-                                                                     alt="{{ $name }}">
-                                                            @else
-                                                                <img src="{{ asset('web/image/no-image.png') }}"
-                                                                     class="img-responsive main-img"
-                                                                     alt="{{ $name }}">
-                                                            @endif
-
-                                                        </a>
-
-                                                        {{-- ADD TO CART HOVER --}}
-                                                        <div class="pro-addcart">
-                                                            <button type="button" class="addcart"
-                                                                    onclick="window.location.href='{{ route('web.product.show', $data->id) }}'">
-                                                                <i class="icon-bag"></i>
-                                                                <span>Add to Cart</span>
-                                                            </button>
+                                                    <div class="grainger-price-block">
+                                                        <span class="price-label">Qiyməti</span>
+                                                        <div class="price-row">
+                                                            <span class="price-amount">${{ number_format($price, 2) }}</span>
                                                         </div>
                                                     </div>
 
-                                                    {{-- INFO --}}
-                                                    <div class="product-info-wrapper">
-
-                                                        <h4 class="product-title">
-                                                            <a href="{{ route('web.product.show', $data->id) }}">
-                                                                {{ $name }}
-                                                            </a>
-                                                        </h4>
-
-                                                        <div class="pro-price">
-                    <span class="price-new">
-                        ${{ number_format($price, 2) }}
-                    </span>
+                                                    {{-- ALT HİSSƏ: ARTIQ BORDER-SİZ MİNİMALİST DİZAYN --}}
+                                                    <div class="grainger-action-block">
+                                                        <div class="quantity-wrapper">
+                                                            <div class="qty-control-group">
+                                                                <button type="button" class="qty-btn grainger-qty-minus">-
+                                                                </button>
+                                                                <input type="number" value="1" min="1"
+                                                                       class="qty-input grainger-qty-input">
+                                                                <button type="button" class="qty-btn grainger-qty-plus">+
+                                                                </button>
+                                                            </div>
                                                         </div>
+                                                        @if(auth()->guard('company')->check())
+                                                            <button type="button" class="btn-cart grainger-btn-cart">
+                                                                Sepete ekle
+                                                            </button>
+
+                                                        @else
+                                                            <button type="button" onclick="window.location.href='{{ route('company.login') }}'" class="btn-login ">
+                                                                Sepete ekle
+                                                            </button>
+                                                        @endif
 
                                                     </div>
 
                                                 </div>
+
                                             </div>
-
-                                        @endforeach
-                                    </div>
-
-                                    <div class="text-center mt-30">
-                                        {{ $products->onEachSide(2)->links('pagination::bootstrap-4') }}                                    </div>
+                                        </div>
+                                    @endforeach
                                 </div>
-                            </div>
 
+                            </div>
                         </div>
                     </div>
                 </div>

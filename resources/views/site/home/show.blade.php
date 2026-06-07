@@ -166,90 +166,99 @@
                 </div>
             </div>
 
-            {{-- OXŞAR MƏHSULLAR (RELATED PRODUCTS) BÖLMƏSİ --}}
-            <div class="related-products-block">
-                <div class="box-content box">
-                    <div class="page-title"><h3>Related Products</h3></div>
-                    <div class="block_box row">
-                        <div id="related-carousel" class="box-product product-carousel clearfix" data-items="5">
-                            @foreach($relatedProducts as $data)
+            <div class="product-tab-block box">
+                <div class="container">
+                    <div class="related-products-block" style="margin-top: -50px;">
+                        <div class="box-content box">
 
-                                @php
-                                    $relatedTranslation = $data->translations->where('locale', app()->getLocale())->first()
-                                        ?? $data->translations->where('locale', 'az')->first();
-                                    $relatedName = $relatedTranslation->name ?? $data->name;
+                            <div class="page-title">
+                                <h3 class="grainger-main-heading">Əlaqəli Məhsullar</h3>
+                            </div>
 
-                                    $img = $data->images->first()->image ?? null;
+                            <div class="row display-flex-row">
+                                @foreach($relatedProducts as $data)
+                                    @php
+                                        $locale = app()->getLocale();
+                                        $translation = $data->translations->firstWhere('locale', $locale);
 
-                                    // Oxşar məhsulun normal qiyməti
-                                    $relatedNormalPrice = ($data->price_type === 'wholesale')
-                                        ? $data->wholesale_price
-                                        : $data->retail_price;
+                                        if (!$translation) {
+                                            $translation = $data->translations->firstWhere('locale', 'az');
+                                        }
 
-                                    // Oxşar məhsul üçün is_discounted və discount_price yoxlanışı
-                                    if ($data->is_discounted == 1 && !empty($data->discount_price)) {
-                                        $relatedCurrentPrice = $data->discount_price;
-                                        $relatedOldPrice = $relatedNormalPrice;
-                                        $relatedHasDiscount = true;
-                                    } else {
-                                        $relatedCurrentPrice = $relatedNormalPrice;
-                                        $relatedOldPrice = null;
-                                        $relatedHasDiscount = false;
-                                    }
-                                @endphp
+                                        $name = $translation?->name ?? '';
 
-                                <div class="product-layout col-xs-12">
-                                    <div class="custom-product-card">
+                                        $price = $data->retail_price;
 
-                                        {{-- ŞƏKİL HİSSƏSİ --}}
-                                        <div class="product-img-wrapper">
-                                            <a href="{{ route('web.product.show', $data->id) }}">
-                                                @if($img)
-                                                    <img src="{{ asset('storage/'.$img) }}" class="img-responsive main-img" alt="{{ $relatedName }}">
-                                                @else
-                                                    <img src="{{ asset('web/image/no-image.png') }}" class="img-responsive main-img" alt="{{ $relatedName }}">
-                                                @endif
-                                            </a>
+                                        if (
+                                            auth()->guard('company')->check() &&
+                                            auth()->guard('company')->user()->price_type === 'wholesale'
+                                        ) {
+                                            $price = $data->wholesale_price;
+                                        }
 
-                                            <div class="pro-addcart">
-                                                <button type="button" class="addcart" onclick="cart.add('{{ $data->id }}')">
-                                                    <i class="icon-bag"></i>
-                                                    <span>Add to Cart</span>
-                                                </button>
+                                        $img = optional($data->images->first())->image;
+                                    @endphp
+
+                                    <div class="col-xs-12 col-sm-6 col-md-4 product-layout">
+                                        <div class="grainger-product-card" data-product-id="{{ $data->id }}">
+                                            <div class="grainger-img-wrapper">
+                                                <a href="{{ route('web.product.show', $data->id) }}">
+                                                    <img src="{{ asset('storage/'.$img) }}" class="img-responsive"
+                                                         alt="{{ $name }}">
+                                                </a>
+                                            </div>
+
+                                            <div class="grainger-info-wrapper">
+                                                <div class="grainger-top-meta">
+                                               <span class="grainger-brand">
+    {{ $data->category?->translations
+        ->firstWhere('locale', app()->getLocale())
+        ?->name
+        ?? $data->category?->translations->firstWhere('locale', 'az')?->name }}
+</span>
+                                                    <h4 class="grainger-title">
+                                                        <a href="{{ route('web.product.show', $data->id) }}">{{ $name }}</a>
+                                                    </h4>
+                                                    <div class="grainger-sku">Məhsul kodu {{ $data->code ?? '' }}</div>
+                                                </div>
+
+                                                <div class="grainger-price-block">
+                                                    <span class="price-label">Qiyməti</span>
+                                                    <div class="price-row">
+                                                        <span class="price-old"> {{ number_format($price, 2) }}</span>
+                                                        <span
+                                                            class="price-amount">{{ number_format($data->discount_price, 2) }}</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="grainger-action-block">
+                                                    <div class="quantity-wrapper">
+                                                        <div class="qty-control-group">
+                                                            <button type="button" class="qty-btn grainger-qty-minus">-
+                                                            </button>
+                                                            <input type="number" value="1" min="1"
+                                                                   class="qty-input grainger-qty-input">
+                                                            <button type="button" class="qty-btn grainger-qty-plus">+
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    @if(auth()->guard('company')->check())
+                                                        <button type="button" class="btn-cart grainger-btn-cart">
+                                                            Sepete ekle
+                                                        </button>
+
+                                                    @else
+                                                        <button type="button" onclick="window.location.href='{{ route('company.login') }}'" class="btn-login ">
+                                                            Sepete ekle
+                                                        </button>
+                                                    @endif
+                                                </div>
                                             </div>
                                         </div>
-
-                                        {{-- MƏLUMAT HİSSƏSİ --}}
-                                        <div class="product-info-wrapper">
-                                            <h4 class="product-title">
-                                                <a href="{{ route('web.product.show', $data->id) }}">{{ $relatedName }}</a>
-                                            </h4>
-
-                                            <div class="grainger-rating" style="color: #ffc107 !important; font-size: 12px; margin-bottom: 5px;">
-                                                <i class="fa fa-star text-warning"></i>
-                                                <i class="fa fa-star text-warning"></i>
-                                                <i class="fa fa-star text-warning"></i>
-                                                <i class="fa fa-star text-warning"></i>
-                                                <i class="fa fa-star text-warning"></i>
-                                            </div>
-
-                                            {{-- Qiymət bloku (Xətt inline style ilə bura da əlavə edildi) --}}
-                                            <div class="pro-price" style="margin-top: 8px; display: flex !important; align-items: baseline !important; gap: 6px !important;">
-                                                @if($relatedHasDiscount)
-                                                    <span class="price-old" style="text-decoration: line-through !important; -webkit-text-decoration-line: line-through !important; color: #999 !important; margin-right: 5px !important; font-size: 13px !important; display: inline-block !important;">
-                                                    ${{ number_format($relatedOldPrice, 2) }}
-                                                </span>
-                                                @endif
-                                                <span class="price-new" style="color: #007a3d !important; font-weight: bold !important; font-size: 16px !important; display: inline-block !important;">
-                                                ${{ number_format($relatedCurrentPrice, 2) }}
-                                            </span>
-                                            </div>
-                                        </div>
-
                                     </div>
-                                </div>
+                                @endforeach
+                            </div>
 
-                            @endforeach
                         </div>
                     </div>
                 </div>
