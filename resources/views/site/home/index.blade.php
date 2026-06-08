@@ -329,7 +329,7 @@
                                             <div class="grainger-price-block">
                                                 <span class="price-label">Qiyməti</span>
                                                 <div class="price-row">
-                                                    <span class="price-amount">${{ number_format($price, 2) }}</span>
+                                                    <span class="price-amount">{{ number_format($price, 2) }} ₼</span>
                                                 </div>
                                             </div>
 
