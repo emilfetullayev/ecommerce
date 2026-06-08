@@ -99,7 +99,7 @@
                                 };
                             @endphp
 
-                            <select name="category_id" class="form-select mb-2">
+                            <select required name="category_id" class="form-select mb-2">
                                 <option value="">Category</option>
 
                                 @foreach($categories as $category)
