@@ -81,11 +81,11 @@
                             </div>
 
                             {{-- PRICES --}}
-                            <input type="number" name="code" class="form-control mb-2" placeholder="Code">
+                            <input type="text" name="code" class="form-control mb-2" placeholder="Code">
 
-                            <input type="number" name="retail_price" class="form-control mb-2" placeholder="Retail price">
-                            <input type="number" name="wholesale_price" class="form-control mb-2" placeholder="Wholesale price">
-                            <input type="number" name="discount_price" class="form-control mb-2" placeholder="Discount price">
+                            <input type="text" name="retail_price" class="form-control mb-2" placeholder="Retail price">
+                            <input type="text" name="wholesale_price" class="form-control mb-2" placeholder="Wholesale price">
+                            <input type="text" name="discount_price" class="form-control mb-2" placeholder="Discount price">
 
                             {{-- CATEGORY --}}
                             @php
