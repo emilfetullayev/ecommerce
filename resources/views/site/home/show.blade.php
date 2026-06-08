@@ -103,11 +103,11 @@
                                 <div class="detail-price-row" style="display: flex !important; align-items: baseline !important; gap: 10px !important;">
                                     @if($hasDiscount)
                                         <span class="price-old-detail" style="font-size: 18px !important; color: #a5a5a5 !important; text-decoration: line-through !important; -webkit-text-decoration-line: line-through !important; font-weight: normal !important; display: inline-block !important;">
-                                        ${{ number_format($oldPrice, 2) }}
+                                        {{ number_format($oldPrice, 2) }} ₼
                                     </span>
                                     @endif
                                     <span class="price-amount-detail" style="font-size: 32px !important; font-weight: 800 !important; color: #007a3d !important; display: inline-block !important;">
-                                    ${{ number_format($currentPrice, 2) }}
+                                    {{ number_format($currentPrice, 2) }} ₼
                                 </span>
                                     <span class="price-unit-detail" style="font-size: 15px !important; color: #555 !important; font-weight: normal !important; display: inline-block !important;">/ adet</span>
                                 </div>
@@ -225,9 +225,9 @@
                                                 <div class="grainger-price-block">
                                                     <span class="price-label">Qiyməti</span>
                                                     <div class="price-row">
-                                                        <span class="price-old"> {{ number_format($price, 2) }}</span>
+                                                        <span class="price-old"> {{ number_format($price, 2) }} ₼</span>
                                                         <span
-                                                            class="price-amount">{{ number_format($data->discount_price, 2) }}</span>
+                                                            class="price-amount">{{ number_format($data->discount_price, 2) }} ₼</span>
                                                     </div>
                                                 </div>
 
