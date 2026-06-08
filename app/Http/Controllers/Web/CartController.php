@@ -13,10 +13,8 @@ class CartController extends Controller
         $cart = session()->get('cart', []);
         $totalPrice = 0;
 
-        // Sizin WhatsApp nömrəniz (Ölkə kodu ilə birlikdə bitişik yazın, məs: 994501234567)
-        $whatsAppNumber = "994506524549";
+        $whatsAppNumber = "994505914145";
 
-        // WhatsApp mesajının başlığı
         $message = "Salam, bu məhsulları sifariş etmək istəyirəm:\n\n";
 
         $i = 1;
