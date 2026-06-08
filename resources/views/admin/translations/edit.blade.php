@@ -37,6 +37,13 @@
                                value="{{ $translations['ru']->value ?? '' }}">
                     </div>
 
+                    <div class="mb-3">
+                        <label>RU</label>
+                        <input name="value_zh"
+                               class="form-control"
+                               value="{{ $translations['zh']->value ?? '' }}">
+                    </div>
+
                     <button class="btn btn-primary">
                         Update
                     </button>

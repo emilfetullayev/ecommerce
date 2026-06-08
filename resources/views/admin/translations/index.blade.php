@@ -42,6 +42,11 @@
                                 <input name="value_ru" class="form-control">
                             </div>
 
+                            <div class="mb-3">
+                                <label>ZH</label>
+                                <input name="value_zh" class="form-control">
+                            </div>
+
                             <button class="btn btn-primary">Save</button>
                         </form>
 
@@ -80,6 +85,7 @@
                                         <td>{{ $rows->where('locale','az')->first()?->value }}</td>
                                         <td>{{ $rows->where('locale','en')->first()?->value }}</td>
                                         <td>{{ $rows->where('locale','ru')->first()?->value }}</td>
+                                        <td>{{ $rows->where('locale','zh')->first()?->value }}</td>
 
                                         <td>
                                             <a class="btn btn-warning btn-sm"

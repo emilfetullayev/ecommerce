@@ -19,7 +19,7 @@ class TranslationController extends Controller
 
     public function store(Request $request)
     {
-        foreach (['az', 'en', 'ru'] as $locale) {
+        foreach (['az', 'en', 'ru', 'zh'] as $locale) {
             Translation::updateOrCreate(
                 [
                     'group' => $request->group,

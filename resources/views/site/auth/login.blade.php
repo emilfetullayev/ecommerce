@@ -4,8 +4,7 @@
     <div id="account-login" class="container" style="margin-top: 50px; margin-bottom: 50px;">
 
         <ul class="breadcrumb">
-            <li><a href="{{ route('home') }}"><i class="fa fa-home"></i></a></li>
-            <li><a href="{{ route('company.login') }}">Hesab</a></li>
+            <li><a href="{{ route('home') }}"><i class="fa fa-home">Home</i></a></li>
             <li><a href="{{ route('company.login') }}">Giriş</a></li>
         </ul>
 
@@ -36,19 +35,18 @@
                         <div class="well"
                              style="min-height: 330px; display: flex; flex-direction: column; justify-content: space-between;">
                             <div>
-                                <h2>Yeni Şirkət Qeydiyyatı</h2>
-                                <p><strong>Hesab Yarat</strong></p>
+                                <h2>{{ t('register_section_title') }}</h2>
+                                <p><strong> {{ t('register_title') }}</strong></p>
                                 <p>
-                                    Qeydiyyatdan keçərək məhsulları daha sürətli sifariş edə,
-                                    sifarişlərinizi izləyə və xüsusi təkliflərdən yararlana bilərsiniz.
+                                    {{ t('register_desc') }}
                                 </p>
                             </div>
 
                             <div>
                                 <a href="{{ route('register') }}"
                                    class="btn btn-primary"
-                                   style="background: #333; border: none; padding: 10px 20px;">
-                                    Qeydiyyatdan Keç
+                                   style="background: #333; color: #fff; border: none; padding: 10px 20px;">
+                                     {{ t('register_button_title') }}
                                 </a>
                             </div>
                         </div>
@@ -56,14 +54,14 @@
 
                     <div class="col-sm-6">
                         <div class="well" style="min-height: 330px;">
-                            <h2>Sistemə Giriş</h2>
-                            <p><strong>Şirkət hesabınızla giriş edin</strong></p>
+                            <h2>{{ t('login_title') }}</h2>
+                            <p><strong> {{ t('login_desc') }}</strong></p>
 
                             <form action="{{ route('company.login') }}" method="POST">
                                 @csrf
 
                                 <div class="form-group">
-                                    <label for="input-email">E-Mail ünvanı</label>
+                                    <label for="input-email">{{ t('login_email') }}</label>
                                     <input type="email"
                                            name="email"
                                            value="{{ old('email') }}"
@@ -76,7 +74,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="input-password">Şifrə</label>
+                                    <label for="input-password">{{ t('login_password') }}</label>
                                     <input type="password"
                                            name="password"
                                            id="input-password"
@@ -87,7 +85,7 @@
 
                                     <a href="#"
                                        style="margin-top: 5px; display: inline-block; color: #666;">
-                                        Şifrəni unutmusunuz?
+                                        {{ t('forgot_password') }}
                                     </a>
                                 </div>
 
@@ -97,7 +95,7 @@
                                             <input type="checkbox"
                                                    name="remember"
                                                 {{ old('remember') ? 'checked' : '' }}>
-                                            Məni xatırla
+                                            {{ t('remember_me') }}
                                         </label>
                                     </div>
                                 </div>
@@ -105,7 +103,7 @@
                                 <button type="submit"
                                         class="btn btn-primary"
                                         style="background: #ffbc00; color: #000; border: none; font-weight: bold; padding: 10px 30px; width: 100%;">
-                                    Giriş Et
+                                     {{ t('sign_in') }}
                                 </button>
                             </form>
                         </div>
