@@ -33,45 +33,78 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-//        $request->validate([
-//            'translations' => 'required|array',
-//            'translations.*.name' => 'required|string',
-//            'category_id' => 'required',
-//            'retail_price' => 'nullable|numeric',
-//            'wholesale_price' => 'nullable|numeric',
-//            'images.*' => 'image|mimes:jpg,jpeg,png,webp'
-//        ]);
+        $validated = $request->validate([
+            'translations.az.name' => 'required|string|max:255',
+            'translations.az.description' => 'required|string',
 
-        // 1. PRODUCT CREATE
+            'translations.en.name' => 'nullable|string|max:255',
+            'translations.en.description' => 'nullable|string',
+
+            'translations.ru.name' => 'nullable|string|max:255',
+            'translations.ru.description' => 'nullable|string',
+
+            'translations.zh.name' => 'nullable|string|max:255',
+            'translations.zh.description' => 'nullable|string',
+
+            'category_id' => 'required|exists:categories,id',
+            'retail_price' => 'required|numeric',
+            'wholesale_price' => 'required|numeric',
+            'discount_price' => 'nullable|numeric',
+
+            'code' => 'required|max:100',
+            'is_featured' => 'nullable',
+            'is_discounted' => 'nullable',
+
+            'images.*' => [
+                'nullable',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:1024', // 300 KB
+                'dimensions:min_width=300,min_height=300,max_width=2000,max_height=2000',
+            ],
+        ], [
+            'translations.az.name.required' => 'Məhsul adı (AZ) mütləqdir.',
+            'translations.az.description.required' => 'Məhsul açıqlaması (AZ) mütləqdir.',
+            'category_id.required' => 'Kateqoriya seçilməlidir.',
+            'category_id.exists' => 'Seçilmiş kateqoriya mövcud deyil.',
+            'images.*.image' => 'Fayl şəkil olmalıdır (jpg, jpeg, png, webp).',
+            'images.*.dimensions' => 'Şəklin ölçüsü 300x300 - 2000x2000 aralığında olmalıdır.',
+            'images.*.max' => 'Şəklin ölçüsü maksimum 1mg ola bilər.',
+            'wholesale_price.numeric' => 'Topdansatış qiymət rəqəm olmalıdır.',
+            'retail_price.numeric' => 'Retail qiymət rəqəm olmalıdır.',
+            'discount_price.numeric' => 'Endirim qiyməti rəqəm olmalıdır.',
+            'code.required' => 'Məhsul kodu mütləqdir.',
+            'wholesale_price.required' => 'Topdansatış qiymət mütləqdir.',
+            'retail_price.required' => 'Perakende qiyməti mütləqdir.',
+        ]);
+
+        // PRODUCT
         $product = Product::create([
-            'category_id' => $request->category_id,
-
-            'retail_price' => $request->retail_price,
-            'wholesale_price' => $request->wholesale_price,
-            'discount_price' => $request->discount_price,
-            'code' => $request->code,
+            'category_id' => $validated['category_id'],
+            'retail_price' => $validated['retail_price'] ?? null,
+            'wholesale_price' => $validated['wholesale_price'] ?? null,
+            'discount_price' => $validated['discount_price'] ?? null,
+            'code' => $validated['code'] ?? null,
             'status' => $request->status ?? 'pending',
             'is_featured' => $request->has('is_featured'),
             'is_discounted' => $request->has('is_discounted'),
         ]);
 
-        // 2. TRANSLATIONS
-        foreach ($request->translations as $locale => $data) {
-
-            $product->translations()->create([
-                'locale' => $locale,
-                'name' => $data['name'] ?? null,
-                'description' => $data['description'] ?? null,
-            ]);
+        // TRANSLATIONS (SAFE)
+        foreach ($validated['translations'] as $locale => $data) {
+            if (!empty($data['name'])) {
+                $product->translations()->create([
+                    'locale' => $locale,
+                    'name' => $data['name'],
+                    'description' => $data['description'] ?? null,
+                ]);
+            }
         }
 
-        // 3. IMAGES
+        // IMAGES (SAFE)
         if ($request->hasFile('images')) {
-
             foreach ($request->file('images') as $file) {
-
-                $filename = Str::random(20) . '.' . $file->getClientOriginalExtension();
-
+                $filename = \Str::random(20) . '.' . $file->getClientOriginalExtension();
                 $path = $file->storeAs('products', $filename, 'public');
 
                 ProductImage::create([
@@ -83,10 +116,8 @@ class ProductController extends Controller
 
         return redirect()
             ->route('products.index')
-            ->with('success', 'Product yaradıldı');
-    }
-
-    /**
+            ->with('success', 'Product uğurla yaradıldı');
+    }    /**
      * EDIT PAGE
      */
     public function edit(Product $product)
@@ -105,31 +136,70 @@ class ProductController extends Controller
 
         try {
 
+            // 🔥 VALIDATION (IMPORTANT)
+            $validated = $request->validate([
+                'translations.az.name' => 'required|string|max:255',
+                'translations.az.description' => 'required|string',
+
+                'translations.en.name' => 'nullable|string|max:255',
+                'translations.en.description' => 'nullable|string',
+
+                'translations.ru.name' => 'nullable|string|max:255',
+                'translations.ru.description' => 'nullable|string',
+
+                'translations.zh.name' => 'nullable|string|max:255',
+                'translations.zh.description' => 'nullable|string',
+
+                'category_id' => 'required|exists:categories,id',
+                'retail_price' => 'required|numeric',
+                'wholesale_price' => 'required|numeric',
+                'discount_price' => 'nullable|numeric',
+
+                'code' => 'required|max:100',
+                'is_featured' => 'nullable',
+                'is_discounted' => 'nullable',
+
+                'images.*' => [
+                    'nullable',
+                    'image',
+                    'mimes:jpg,jpeg,png,webp',
+                    'max:1024', // 🔥 300KB
+                    'dimensions:min_width=300,min_height=300,max_width=2000,max_height=2000',
+                ],
+            ], [
+                'translations.az.name.required' => 'Məhsul adı (AZ) mütləqdir.',
+                'translations.az.description.required' => 'Məhsul açıqlaması (AZ) mütləqdir.',
+                'category_id.required' => 'Kateqoriya seçilməlidir.',
+                'category_id.exists' => 'Seçilmiş kateqoriya mövcud deyil.',
+                'images.*.image' => 'Fayl şəkil olmalıdır (jpg, jpeg, png, webp).',
+                'images.*.dimensions' => 'Şəklin ölçüsü 300x300 - 2000x2000 aralığında olmalıdır.',
+                'images.*.max' => 'Şəklin ölçüsü maksimum 1mg ola bilər.',
+                'wholesale_price.numeric' => 'Topdansatış qiymət rəqəm olmalıdır.',
+                'retail_price.numeric' => 'Retail qiymət rəqəm olmalıdır.',
+                'discount_price.numeric' => 'Endirim qiyməti rəqəm olmalıdır.',
+                'code.required' => 'Məhsul kodu mütləqdir.',
+                'wholesale_price.required' => 'Topdansatış qiymət mütləqdir.',
+                'retail_price.required' => 'Perakende qiyməti mütləqdir.',
+            ]);
+
             // 1. PRODUCT UPDATE
             $product->update([
-                'category_id' => $request->category_id,
-                'retail_price' => $request->retail_price,
-                'wholesale_price' => $request->wholesale_price,
-                'discount_price' => $request->discount_price,
-                'code' => $request->code,
-                'status' => $request->status,
+                'category_id' => $validated['category_id'],
+                'retail_price' => $validated['retail_price'],
+                'wholesale_price' => $validated['wholesale_price'],
+                'discount_price' => $validated['discount_price'] ?? null,
+                'code' => $validated['code'],
+                'status' => $request->status ?? 'pending',
                 'is_featured' => $request->has('is_featured'),
                 'is_discounted' => $request->has('is_discounted'),
-
             ]);
 
             // 2. TRANSLATIONS (SAFE REPLACE)
-            if ($request->has('translations')) {
+            $product->translations()->delete();
 
-                // clean delete
-                $product->translations()->delete();
+            foreach ($validated['translations'] as $locale => $data) {
 
-                foreach ($request->translations as $locale => $data) {
-
-                    if (!isset($data['name'])) {
-                        continue;
-                    }
-
+                if (!empty($data['name'])) {
                     $product->translations()->create([
                         'locale' => $locale,
                         'name' => $data['name'],
@@ -139,7 +209,7 @@ class ProductController extends Controller
             }
 
             // 3. REMOVE IMAGES
-            if ($request->removed_images) {
+            if ($request->filled('removed_images')) {
 
                 $ids = explode(',', $request->removed_images);
 
@@ -161,7 +231,6 @@ class ProductController extends Controller
                 foreach ($request->file('images') as $file) {
 
                     $filename = Str::random(20) . '.' . $file->getClientOriginalExtension();
-
                     $path = $file->storeAs('products', $filename, 'public');
 
                     ProductImage::create([
@@ -181,10 +250,11 @@ class ProductController extends Controller
 
             DB::rollBack();
 
-            return back()->withErrors($e->getMessage());
+            return back()->withErrors([
+                'error' => $e->getMessage()
+            ]);
         }
     }
-
     public function deleteImage($id)
     {
         $image = ProductImage::findOrFail($id);

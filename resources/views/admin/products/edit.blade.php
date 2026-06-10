@@ -17,6 +17,17 @@
 
                     <div class="card-body">
 
+                        {{-- GLOBAL ERRORS --}}
+                        @if ($errors->any())
+                            <div class="alert alert-danger">
+                                <ul class="mb-0">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
                         <form action="{{ route('products.update', $product) }}"
                               method="POST"
                               enctype="multipart/form-data">
@@ -24,7 +35,7 @@
                             @csrf
                             @method('PUT')
 
-                            <!-- 🌍 TRANSLATIONS -->
+                            <!-- TRANSLATIONS -->
                             <div class="mb-3">
 
                                 <ul class="nav nav-tabs">
@@ -32,10 +43,10 @@
                                     @foreach(['az','en','ru','zh'] as $lang)
 
                                         <li class="nav-item">
-                                            <button class="nav-link @if($loop->first) active @endif"
+                                            <button type="button"
+                                                    class="nav-link @if($loop->first) active @endif"
                                                     data-bs-toggle="tab"
-                                                    data-bs-target="#{{ $lang }}"
-                                                    type="button">
+                                                    data-bs-target="#{{ $lang }}">
                                                 {{ strtoupper($lang) }}
                                             </button>
                                         </li>
@@ -49,21 +60,27 @@
                                     @foreach(['az','en','ru','zh'] as $lang)
 
                                         @php
-                                            $t = $product->translations->where('locale', $lang)->first();
+                                            $t = $product->translations->firstWhere('locale', $lang);
                                         @endphp
 
                                         <div class="tab-pane fade @if($loop->first) show active @endif"
                                              id="{{ $lang }}">
 
+                                            <!-- NAME -->
                                             <input type="text"
                                                    name="translations[{{ $lang }}][name]"
-                                                   class="form-control mb-2"
-                                                   value="{{ $t->name ?? '' }}"
+                                                   class="form-control mb-1 @error('translations.'.$lang.'.name') is-invalid @enderror"
+                                                   value="{{ old("translations.$lang.name", $t->name ?? '') }}"
                                                    placeholder="Name">
 
+                                            @error('translations.'.$lang.'.name')
+                                            <small class="text-danger">{{ $message }}</small>
+                                            @enderror
+
+                                            <!-- DESCRIPTION -->
                                             <textarea name="translations[{{ $lang }}][description]"
-                                                      class="form-control"
-                                                      placeholder="Description">{{ $t->description ?? '' }}</textarea>
+                                                      class="form-control mb-2"
+                                                      placeholder="Description">{{ old("translations.$lang.description", $t->description ?? '') }}</textarea>
 
                                         </div>
 
@@ -73,59 +90,67 @@
 
                             </div>
 
+                            <!-- CODE -->
                             <input type="text"
                                    name="code"
-                                   class="form-control mb-2"
-                                   value="{{ $product->code }}"
+                                   class="form-control mb-1 @error('code') is-invalid @enderror"
+                                   value="{{ old('code', $product->code) }}"
                                    placeholder="Code">
-                            <!-- PRICES -->
-                            <input type="number"
+
+                            @error('code')
+                            <small class="text-danger">{{ $message }}</small>
+                            @enderror
+
+                            <!-- RETAIL -->
+                            <input type="text"
                                    name="retail_price"
-                                   class="form-control mb-2"
-                                   value="{{ $product->retail_price }}"
+                                   class="form-control mb-1 @error('retail_price') is-invalid @enderror"
+                                   value="{{ old('retail_price', $product->retail_price) }}"
                                    placeholder="Retail price">
 
+                            @error('retail_price')
+                            <small class="text-danger">{{ $message }}</small>
+                            @enderror
 
-                            <input type="number"
+                            <!-- WHOLESALE -->
+                            <input type="text"
                                    name="wholesale_price"
-                                   class="form-control mb-2"
-                                   value="{{ $product->wholesale_price }}"
+                                   class="form-control mb-1 @error('wholesale_price') is-invalid @enderror"
+                                   value="{{ old('wholesale_price', $product->wholesale_price) }}"
                                    placeholder="Wholesale price">
 
-                            <input type="number"
+                            @error('wholesale_price')
+                            <small class="text-danger">{{ $message }}</small>
+                            @enderror
+
+                            <!-- DISCOUNT -->
+                            <input type="text"
                                    name="discount_price"
-                                   class="form-control mb-2"
-                                   value="{{ $product->discount_price }}"
+                                   class="form-control mb-1 @error('discount_price') is-invalid @enderror"
+                                   value="{{ old('discount_price', $product->discount_price) }}"
                                    placeholder="Discount price">
 
-
-
-                            <select name="price_type" class="form-select mb-2">
-
-                                <option value="retail" @selected($product->price_type == 'retail')>
-                                    Retail
-                                </option>
-
-                                <option value="wholesale" @selected($product->price_type == 'wholesale')>
-                                    Wholesale
-                                </option>
-
-                            </select>
-
-                            <!-- COMPANY -->
-
+                            @error('discount_price')
+                            <small class="text-danger">{{ $message }}</small>
+                            @enderror
 
                             <!-- CATEGORY -->
-                            <select name="category_id" class="form-select mb-2">
+                            <select name="category_id"
+                                    class="form-select mb-1 @error('category_id') is-invalid @enderror">
 
                                 @foreach($categories as $cat)
                                     <option value="{{ $cat->id }}"
                                         @selected($product->category_id == $cat->id)>
-                                        {{ $cat->name }}
+                                        {{ $cat->translations->firstWhere('locale', app()->getLocale())?->name
+                                            ?? $cat->translations->firstWhere('locale', 'az')?->name }}
                                     </option>
                                 @endforeach
 
                             </select>
+
+                            @error('category_id')
+                            <small class="text-danger">{{ $message }}</small>
+                            @enderror
 
                             <!-- STATUS -->
                             <select name="status" class="form-select mb-2">
@@ -136,51 +161,41 @@
 
                             </select>
 
-                            <!-- FEATURED -->
+                            <!-- CHECKBOX -->
                             <div class="form-check mb-2">
-
                                 <input type="checkbox"
                                        name="is_featured"
                                        value="1"
                                        class="form-check-input"
                                     @checked($product->is_featured)>
-
-                                <label class="form-check-label">
-                                    Featured (banner)
-                                </label>
-
+                                <label>Featured</label>
                             </div>
 
-                            <!-- FEATURED -->
                             <div class="form-check mb-2">
                                 <input type="checkbox"
                                        name="is_discounted"
                                        value="1"
                                        class="form-check-input"
                                     @checked($product->is_discounted)>
-
-                                <label class="form-check-label">
-                                    Endirimde
-                                </label>
+                                <label>Discounted</label>
                             </div>
 
-                            <!-- NEW IMAGES -->
-                            <div class="mb-3">
+                            <!-- IMAGES -->
+                            <input type="file"
+                                   name="images[]"
+                                   id="images"
+                                   class="form-control mb-1"
+                                   multiple>
 
-                                <input type="file"
-                                       name="images[]"
-                                       id="images"
-                                       class="form-control"
-                                       multiple>
+                            @error('images.*')
+                            <small class="text-danger">{{ $message }}</small>
+                            @enderror
 
-                                <div id="preview" class="d-flex gap-2 flex-wrap mt-2"></div>
+                            <div id="preview" class="d-flex gap-2 flex-wrap mt-2"></div>
 
-                            </div>
-
-                            <!-- removed images -->
                             <input type="hidden" name="removed_images" id="removed_images">
 
-                            <button class="btn btn-primary w-100">
+                            <button class="btn btn-primary w-100 mt-3">
                                 Update Product
                             </button>
 
@@ -192,7 +207,7 @@
 
             </div>
 
-            <!-- RIGHT: IMAGES -->
+            <!-- RIGHT -->
             <div class="col-lg-8">
 
                 <div class="card">
@@ -217,18 +232,7 @@
                                     <button type="button"
                                             class="remove-image"
                                             data-id="{{ $img->id }}"
-                                            style="
-                                        position:absolute;
-                                        top:-8px;
-                                        right:-8px;
-                                        width:22px;
-                                        height:22px;
-                                        border-radius:50%;
-                                        border:none;
-                                        background:red;
-                                        color:white;
-                                        font-size:12px;
-                                        cursor:pointer;">
+                                            style="position:absolute;top:-8px;right:-8px;width:22px;height:22px;border-radius:50%;border:none;background:red;color:white;">
                                         ×
                                     </button>
 
@@ -247,54 +251,5 @@
         </div>
 
     </div>
-
-    <!-- PREVIEW -->
-    <script>
-        document.getElementById('images').addEventListener('change', function (event) {
-
-            let preview = document.getElementById('preview');
-            preview.innerHTML = '';
-
-            Array.from(event.target.files).forEach(file => {
-
-                let reader = new FileReader();
-
-                reader.onload = function (e) {
-
-                    let img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.style.width = '70px';
-                    img.style.height = '70px';
-                    img.style.objectFit = 'cover';
-                    img.style.borderRadius = '8px';
-                    img.style.border = '1px solid #ddd';
-
-                    preview.appendChild(img);
-                };
-
-                reader.readAsDataURL(file);
-            });
-
-        });
-    </script>
-
-    <!-- REMOVE IMAGES -->
-    <script>
-        let removedImages = [];
-
-        document.querySelectorAll('.remove-image').forEach(btn => {
-
-            btn.addEventListener('click', function () {
-
-                removedImages.push(this.dataset.id);
-
-                document.getElementById('removed_images').value = removedImages.join(',');
-
-                this.closest('.img-box').remove();
-
-            });
-
-        });
-    </script>
 
 @endsection
