@@ -13,36 +13,41 @@ class CartController extends Controller
         $cart = session()->get('cart', []);
         $totalPrice = 0;
 
-        $whatsAppNumber = "994505914145";
+        $whatsAppNumber = "994506524549";
 
-        $message = "Salam, bu məhsulları sifariş etmək istəyirəm:\n\n";
+        $date = date('d.m.y');
 
-        $i = 1;
+        $companyName = "Müştəri";
+        if (auth()->guard('company')->check()) {
+            $companyName = auth()->guard('company')->user()->company_name;
+        }
+
+        $message = "{$date}\n";
+        $message .= "Sifariş : {$companyName}\n\n";
+
         foreach ($cart as $id => $item) {
             $itemTotal = $item['price'] * $item['quantity'];
             $totalPrice += $itemTotal;
 
-            // Şəkil linkini tam URL halına salırıq
-            $imageUrl = $item['image'] ? asset('storage/' . $item['image']) : asset('web/image/no-image.png');
+            $productCode = $item['code'] ?? null;
+            if (!$productCode) {
+                $product = \App\Models\Product::find($id);
+                $productCode = $product ? $product->code : '';
+            }
 
-            // Hər məhsulun məlumat sətiri
-            $message .= "📦 *Məhsul {$i}:* {$item['name']}\n";
-            $message .= "🔢 *Say:* {$item['quantity']} ədəd\n";
-            $message .= "💰 *Qiymət:* \${$item['price']}\n";
-            $message .= "🖼️ *Şəkil:* {$imageUrl}\n";
-            $message .= "---------------------------\n\n";
-            $i++;
+            $codeText = $productCode ? " ( kod: {$productCode} )" : "";
+
+            $message .= "{$item['name']}{$codeText} {$item['quantity']} ədəd x " . number_format($item['price'], 2) . " ₼\n";
         }
 
-        $message .= "💵 *Yekun Məbləğ:* \${$totalPrice}";
+        $message .= "\nCəm " . number_format($totalPrice, 2) . " ₼";
+
         $encodedMessage = urlencode($message);
 
-        // Tam WhatsApp yönləndirmə linki
         $whatsAppLink = "https://api.whatsapp.com/send?phone={$whatsAppNumber}&text={$encodedMessage}";
 
         return view('site.cart.index', compact('cart', 'totalPrice', 'whatsAppLink'));
     }
-
     public function remove($id)
     {
         $cart = session()->get('cart', []);
@@ -91,14 +96,24 @@ class CartController extends Controller
         session()->put('cart', $cart);
 
         $total = 0;
-        foreach ($cart as $item) {
+        $formattedItems = [];
+
+        foreach ($cart as $id => $item) {
             $total += $item['price'] * $item['quantity'];
+
+            $formattedItems[] = [
+                'id'        => $id,
+                'name'      => $item['name'],
+                'price'     => number_format($item['price'], 2),
+                'quantity'  => $item['quantity'],
+                'image_url' => $item['image'] ? asset('storage/' . $item['image']) : asset('assets/no-image.png') // şəklin tam linki
+            ];
         }
 
         return response()->json([
-            'success' => 'Məhsul səbətə əlavə edildi!',
+            'success'    => 'Məhsul səbətə əlavə edildi!',
             'cart_count' => array_sum(array_column($cart, 'quantity')),
-            'cart_total' => number_format($total, 2)
+            'cart_total' => number_format($total, 2),
+            'cart_items' => $formattedItems
         ]);
-    }
-}
+    }}

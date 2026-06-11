@@ -73,6 +73,184 @@
 <body class="common-home">
 
 <style>
+
+    /* Səbət Paneli Əsas Struktur */
+    .cart-sidebar {
+        position: fixed;
+        top: 0;
+        right: -400px; /* Defolt olaraq gizli */
+        width: 380px;
+        height: 100%;
+        background-color: #fff;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+        z-index: 9999;
+        transition: right 0.3s ease-in-out;
+        display: flex;
+        flex-direction: column;
+        font-family: sans-serif;
+    }
+
+    .cart-sidebar.open {
+        right: 0; /* Aktiv olduqda görünür */
+    }
+
+    /* Arxa fon qaraltısı */
+    .cart-sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9998;
+        display: none;
+    }
+
+    .cart-sidebar-overlay.open {
+        display: block;
+    }
+
+    /* Header */
+    .cart-sidebar-header {
+        padding: 20px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .cart-sidebar-header h3 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: bold;
+    }
+    .close-sidebar-btn {
+        background: none;
+        border: none;
+        font-size: 28px;
+        cursor: pointer;
+    }
+
+    /* Body və Məhsul Siyahısı */
+    .cart-sidebar-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+    }
+
+    .cart-sidebar-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #f9f9f9;
+        padding-bottom: 15px;
+    }
+    .cart-item-img {
+        width: 70px;
+        height: 70px;
+        object-fit: cover;
+        border: 1px solid #eee;
+        margin-right: 15px;
+    }
+    .cart-item-details {
+        flex: 1;
+    }
+    .cart-item-name {
+        font-size: 14px;
+        font-weight: 600;
+        margin: 0 0 5px 0;
+    }
+    .cart-item-price {
+        color: #27ae60;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+
+    /* Say idarəetmə paneldə */
+    .sidebar-qty-group {
+        display: flex;
+        align-items: center;
+        border: 1px solid #ccc;
+        width: fit-content;
+    }
+    .sidebar-qty-btn {
+        background: #f5f5f5;
+        border: none;
+        padding: 2px 8px;
+        cursor: pointer;
+    }
+    .sidebar-qty-input {
+        width: 35px;
+        text-align: center;
+        border: none;
+        border-left: 1px solid #ccc;
+        border-right: 1px solid #ccc;
+        font-size: 12px;
+    }
+    .btn-remove-item {
+        background: none;
+        border: none;
+        color: #999;
+        margin-left: 10px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+    .btn-remove-item:hover { color: #cc0000; }
+
+    /* Cəmi və Çatdırılma */
+    .cart-sidebar-summary {
+        margin-top: 20px;
+        border-top: 1px solid #eee;
+        padding-top: 15px;
+    }
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        font-weight: bold;
+        font-size: 16px;
+    }
+    .total-price { color: #27ae60; }
+    .shipping-info {
+        margin-top: 10px;
+        font-size: 13px;
+        color: #666;
+    }
+
+    /* Footer Düymələr */
+    .cart-sidebar-footer {
+        padding: 20px;
+        border-top: 1px solid #eee;
+    }
+    .btn-sidebar-checkout {
+        display: block;
+        width: 100%;
+        background: #111;
+        color: #fff;
+        text-align: center;
+        padding: 12px;
+        font-weight: bold;
+        text-decoration: none;
+        margin-bottom: 10px;
+    }
+    .btn-sidebar-view-cart {
+        display: block;
+        width: 100%;
+        background: #fff;
+        color: #111;
+        border: 1px solid #111;
+        text-align: center;
+        padding: 12px;
+        font-weight: bold;
+        text-decoration: none;
+        margin-bottom: 10px;
+    }
+    .btn-sidebar-checkout:hover { background: #333; color: #fff; }
+    .btn-sidebar-view-cart:hover { background: #f5f5f5; color: #111; }
+    .secure-shopping {
+        text-align: center;
+        font-size: 12px;
+        color: #27ae60;
+    }
+
     /* Slayderin ümumi konteyneri və izolasiyası */
     .slideshow {
         position: relative !important;
@@ -818,36 +996,83 @@ Grainger Style Product Card - TAM VƏ YEKUN RESPONSIVE CSS KODU
 @yield('content')
 
 
+<div id="right-cart-sidebar" class="cart-sidebar">
+    <div class="cart-sidebar-header">
+        <h3>Səbətiniz (<span class="sidebar-cart-count">0</span>)</h3>
+        <button type="button" id="close-cart-sidebar" class="close-sidebar-btn">&times;</button>
+    </div>
+
+    <div class="cart-sidebar-body">
+        <div id="sidebar-cart-empty" style="display: none; text-align: center; padding: 20px;">
+            Səbətiniz boşdur.
+        </div>
+
+        <div id="sidebar-cart-items">
+        </div>
+
+        <div class="cart-sidebar-summary">
+            <div class="summary-row">
+                <span>Cəmi:</span>
+                <span id="sidebar-cart-total" class="total-price">0.00 AZN</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="cart-sidebar-footer">
+        <a href="/cart" class="btn-sidebar-checkout">SİFARİŞƏ KEÇ</a>
+        <div class="secure-shopping">
+            <i class="fa fa-shield"></i> Təhlükəsiz alış-veriş
+        </div>
+    </div>
+</div>
+
+<div id="cart-sidebar-overlay" class="cart-sidebar-overlay"></div>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
 
+        // Səbət Modalı və Arxa fon elementləri
+        const sidebar = document.getElementById('right-cart-sidebar');
+        const overlay = document.getElementById('cart-sidebar-overlay');
+        const closeBtn = document.getElementById('close-cart-sidebar');
+
+        // Paneli bağlamaq funksiyası
+        function closeCartSidebar() {
+            if (sidebar) sidebar.classList.remove('open');
+            if (overlay) overlay.classList.remove('open');
+        }
+
+        if (closeBtn) closeBtn.addEventListener('click', closeCartSidebar);
+        if (overlay) overlay.addEventListener('click', closeCartSidebar);
+
+
         // ==========================================================================
-        // 1. MİQDAR ARTIRMA VƏ AZALTMA FUNKSİYASI (PLUS / MINUS)
+        // 1. MİQDAR ARTIRMA VƏ AZALTMA FUNKSİYASI (+ / -)
         // ==========================================================================
         document.addEventListener('click', function (e) {
 
-            // --- PLUS (+) DÜYMƏSİNƏ KLİKLƏNİB? ---
+            // --- PLUS (+) DÜYMƏSİ ---
             var btnPlus = e.target.closest('.detal-qty-plus, .grainger-qty-plus');
             if (btnPlus) {
                 e.preventDefault();
 
                 let input = btnPlus.classList.contains('detal-qty-plus')
-                    ? document.getElementById('input-quantity') // Detal səhifəsi üçün
-                    : btnPlus.parentElement.querySelector('.grainger-qty-input'); // Siyahı üçün
+                    ? document.getElementById('input-quantity')
+                    : btnPlus.parentElement.querySelector('.grainger-qty-input');
 
                 if (input) {
                     input.value = (parseInt(input.value) || 1) + 1;
                 }
             }
 
-            // --- MINUS (-) DÜYMƏSİNƏ KLİKLƏNİB? ---
+            // --- MINUS (-) DÜYMƏSİ ---
             var btnMinus = e.target.closest('.detal-qty-minus, .grainger-qty-minus');
             if (btnMinus) {
                 e.preventDefault();
 
                 let input = btnMinus.classList.contains('detal-qty-minus')
-                    ? document.getElementById('input-quantity') // Detal səhifəsi üçün
-                    : btnMinus.parentElement.querySelector('.grainger-qty-input'); // Siyahı üçün
+                    ? document.getElementById('input-quantity')
+                    : btnMinus.parentElement.querySelector('.grainger-qty-input');
 
                 if (input) {
                     let v = parseInt(input.value) || 1;
@@ -860,11 +1085,10 @@ Grainger Style Product Card - TAM VƏ YEKUN RESPONSIVE CSS KODU
 
 
         // ==========================================================================
-        // 2. SƏBƏTƏ ƏLAVƏ ET FUNKSİYASI (UNIVERSAL FETCH / AJAX)
+        // 2. SƏBƏTƏ ƏLAVƏ ET VƏ SAĞ PANELİ (MODAL) DOLDURMA MECHANIZMI
         // ==========================================================================
         document.addEventListener('click', function (e) {
 
-            // Kliklənən element real səbət düyməsidirsə (Köhnə ID və ya Yeni Class)
             var btnCart = e.target.closest('#button-cart, .grainger-btn-cart');
 
             if (btnCart) {
@@ -874,32 +1098,34 @@ Grainger Style Product Card - TAM VƏ YEKUN RESPONSIVE CSS KODU
                 var productId = null;
                 var quantity = 1;
 
-                // A variantı: DETAL SƏHİFƏSİ (ID əsaslı mexanizm)
+                // Əsas məhsul kartını tapırıq
+                var productCard = btnCart.closest('.grainger-product-card');
+
+                // A variantı: Detal səhifəsindədirsə
                 if (btnCart.id === 'button-cart') {
                     productId = document.getElementById('main-product-id')?.value;
                     let qtyInput = document.getElementById('input-quantity');
                     quantity = qtyInput ? (parseInt(qtyInput.value) || 1) : 1;
                 }
-                // B variantı: SİYAHI BLOKU (Class əsaslı mexanizm)
+                // B variantı: Siyahı (Endirimli məhsullar) blokundadırsa
                 else if (btnCart.classList.contains('grainger-btn-cart')) {
-                    var productCard = btnCart.closest('.grainger-product-card');
                     productId = productCard ? productCard.getAttribute('data-product-id') : null;
                     let qtyInput = productCard ? productCard.querySelector('.grainger-qty-input') : null;
                     quantity = qtyInput ? (parseInt(qtyInput.value) || 1) : 1;
                 }
 
-                // ID tapılmadıqda xəta ver və dayandır
+                // ID yoxdursa dayandır
                 if (!productId) {
                     alert('Məhsul ID tapılmadı!');
                     return;
                 }
 
-                // Düyməni loading vəziyyətinə gətir
+                // Düyməni yüklənir vəziyyətinə gətir
                 var originalText = btnCart.innerHTML;
-                btnCart.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Yüklənir...';
+                btnCart.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
                 btnCart.disabled = true;
 
-                // Təhlükəsiz Fetch (AJAX) Sorğusu
+                // AJAX (Fetch) Sorğusu
                 fetch('/cart/add', {
                     method: 'POST',
                     credentials: 'same-origin',
@@ -915,31 +1141,78 @@ Grainger Style Product Card - TAM VƏ YEKUN RESPONSIVE CSS KODU
                 })
                     .then(response => response.json())
                     .then(data => {
-                        // Düyməni normal halına qaytar
+                        // Düyməni normal vəziyyətinə qaytar
                         btnCart.innerHTML = originalText;
                         btnCart.disabled = false;
 
                         if (data.success) {
-                            alert(data.success);
 
-                            // ==========================================================================
-                            // HEADER REFRESH (Səbət Sayğacları)
-                            // ==========================================================================
-
-                            // Səbətdəki ümumi sayı yeniləyir
+                            // 1. Header-dəki bütün köhnə səbət sayğaclarını yenilə
                             document.querySelectorAll('.cart-item').forEach(el => {
                                 el.innerText = data.cart_count;
                             });
 
-                            // Səbət məbləğ blokunu yeniləyir
-                            var cartTotal = document.getElementById('cart-total');
-                            if (cartTotal) {
-                                cartTotal.innerHTML = `
-                                <span class="hidden-sm hidden-xs">My Cart:</span>
-                                <span class="cart-item">${data.cart_count}</span>
-                                <span class="hidden-sm hidden-xs"> - $${data.cart_total ?? '0.00'}</span>
-                            `;
+                            // 2. Sağ panelin başlığındakı sayı yenilə -> Səbətiniz (X)
+                            document.querySelectorAll('.sidebar-cart-count').forEach(el => {
+                                el.innerText = data.cart_count;
+                            });
+
+                            // 3. Sağ panelin aşağısındakı Ümumi məbləği yenilə
+                            let totalAmount = data.cart_total ?? '0.00';
+                            var totalContainer = document.getElementById('sidebar-cart-total');
+                            if (totalContainer) {
+                                totalContainer.innerText = totalAmount + ' AZN';
                             }
+
+                            // 4. Panel daxilindəki məhsul siyahısı konteyneri
+                            var itemsContainer = document.getElementById('sidebar-cart-items');
+
+                            if (itemsContainer) {
+                                // Əgər backend sizə bütün səbət siyahısını array olaraq qaytarırsa:
+                                if (data.cart_items && data.cart_items.length > 0) {
+                                    itemsContainer.innerHTML = ''; // təmizlə
+                                    data.cart_items.forEach(item => {
+                                        itemsContainer.innerHTML += `
+                                    <div class="cart-sidebar-item">
+                                        <img src="${item.image_url}" class="cart-item-img" alt="${item.name}">
+                                        <div class="cart-item-details">
+                                            <h4 class="cart-item-name">${item.name}</h4>
+                                            <div class="cart-item-price">${item.price} AZN</div>
+                                            <div class="sidebar-qty-group">
+                                                <input type="number" value="${item.quantity}" class="sidebar-qty-input" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                                    });
+                                }
+                                // Əgər backend array qaytarmırsa, yeni əlavə etdiyimiz data- atributlarından oxuyub tək göstərsin:
+                                else if (productCard) {
+                                    let pName = productCard.getAttribute('data-name') || 'Məhsul';
+                                    let pImg = productCard.getAttribute('data-img') || '';
+                                    let pPrice = productCard.getAttribute('data-price') || '0.00';
+
+                                    itemsContainer.innerHTML = `
+                                <div class="cart-sidebar-item">
+                                    <img src="${pImg}" class="cart-item-img" alt="${pName}">
+                                    <div class="cart-item-details">
+                                        <h4 class="cart-item-name">${pName}</h4>
+                                        <div class="cart-item-price">${pPrice} AZN</div>
+                                        <div class="sidebar-qty-group" style="border:none;">
+                                            <span style="font-size: 13px; color: #666;">Say: <strong>${quantity}</strong></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                                }
+                            }
+
+                            // 5. Hər şey hazırdırsa, Modalı və Qaraltını sağdan ekrana gətir
+                            if (sidebar && overlay) {
+                                sidebar.classList.add('open');
+                                overlay.classList.add('open');
+                            }
+
                         } else {
                             alert(data.error || 'Xəta baş verdi');
                         }
@@ -954,8 +1227,10 @@ Grainger Style Product Card - TAM VƏ YEKUN RESPONSIVE CSS KODU
         }, true);
 
     });
-</script><script>
-    $(document).ready(function() {
+</script>
+
+<script>
+$(document).ready(function() {
         $('#related-carousel').owlCarousel({
             loop: false,
             nav: true,
