@@ -13,7 +13,7 @@ class CartController extends Controller
         $cart = session()->get('cart', []);
         $totalPrice = 0;
 
-        $whatsAppNumber = "994506524549";
+        $whatsAppNumber = "994505914145";
 
         $date = date('d.m.y');
 
