@@ -12,6 +12,9 @@ class SetLanguage
     {
         if (session()->has('locale') && in_array(session()->get('locale'), ['az', 'en', 'ru', 'zh'])) {
             app()->setLocale(session()->get('locale'));
+        } else {
+            app()->setLocale('az');
+            session()->put('locale', 'az');
         }
 
         return $next($request);
