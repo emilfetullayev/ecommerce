@@ -18,10 +18,8 @@
                                 $name = $translation->name ?? $product->name ?? '';
                                 $description = $translation->description ?? $product->description ?? '';
 
-                                // DEFAULT retail price
                                 $price = $product->retail_price;
 
-                                // company varsa və wholesale seçilibsə
                                 if (
                                 auth()->guard('company')->check() &&
                                 auth()->guard('company')->user()->price_type === 'wholesale'
@@ -43,9 +41,9 @@
                                     </div>
 
                                     <div class="slide-content-side">
-<span class="sub-title">
-{{ Str::limit($description, 80) }}
-</span>
+                                        <span class="sub-title">
+                                        {{ Str::limit($description, 80) }}
+                                        </span>
 
                                         <h2 class="main-title">
                                             {{ $name }}
@@ -103,24 +101,27 @@
                                     $img = optional($data->images->first())->image;
                                 @endphp
 
-                                <div class="col-xs-12 col-sm-6 col-md-4 product-layout">
-                                    <div class="grainger-product-card"
+                                <div class="col-xs-12 col-sm-6 col-md-3 product-layout">
+                                    <div class="grainger-product-card style-ad-card"
                                          data-product-id="{{ $data->id }}"
                                          data-name="{{ $name }}"
                                          data-price="{{ number_format($data->discount_price, 2) }}"
                                          data-img="{{ asset('storage/'.$img) }}">
 
-                                        <div class="grainger-img-wrapper">
+                                        <div class="ad-image-box">
                                             <a href="{{ route('web.product.show', $data->id) }}">
                                                 <img src="{{ asset('storage/'.$img) }}" class="img-responsive" alt="{{ $name }}">
                                             </a>
+                                            <div class="ad-heart-badge">
+                                                <i class="fa fa-heart-o"></i>
+                                            </div>
                                         </div>
 
                                         <div class="grainger-info-wrapper">
                                             <div class="grainger-top-meta">
-<span class="grainger-brand">
-{{ $data->category?->translations->firstWhere('locale', app()->getLocale())?->name ?? $data->category?->translations->firstWhere('locale', 'az')?->name }}
-</span>
+                                                <span class="grainger-brand">
+                                                {{ $data->category?->translations->firstWhere('locale', app()->getLocale())?->name ?? $data->category?->translations->firstWhere('locale', 'az')?->name }}
+                                                </span>
                                                 <h4 class="grainger-title">
                                                     <a href="{{ route('web.product.show', $data->id) }}">{{ $name }}</a>
                                                 </h4>
@@ -150,6 +151,7 @@
                                                 @endif
                                             </div>
                                         </div>
+
                                     </div>
                                 </div>
                             @endforeach
@@ -186,9 +188,10 @@
                                     $img = optional($data->images->first())->image;
                                 @endphp
 
-                                <div class="col-xs-12 col-sm-6 col-md-4 product-layout">
-                                    <div class="grainger-product-card" data-product-id="{{ $data->id }}">
-                                        <div class="grainger-img-wrapper">
+                                <div class="col-xs-12 col-sm-6 col-md-3 product-layout">
+                                    <div class="grainger-product-card style-ad-card" data-product-id="{{ $data->id }}">
+
+                                        <div class="ad-image-box">
                                             <a href="{{ route('web.product.show', $data->id) }}">
                                                 @if($img)
                                                     <img src="{{ asset('storage/'.$img) }}" class="img-responsive" alt="{{ $name }}">
@@ -196,13 +199,16 @@
                                                     <img src="{{ asset('web/image/no-image.png') }}" class="img-responsive" alt="{{ $name }}">
                                                 @endif
                                             </a>
+                                            <div class="ad-heart-badge">
+                                                <i class="fa fa-heart-o"></i>
+                                            </div>
                                         </div>
 
                                         <div class="grainger-info-wrapper">
                                             <div class="grainger-top-meta">
-<span class="grainger-brand">
-{{ $data->category?->translations->firstWhere('locale', app()->getLocale())?->name ?? $data->category?->translations->firstWhere('locale', 'az')?->name }}
-</span>
+                                                <span class="grainger-brand">
+                                                {{ $data->category?->translations->firstWhere('locale', app()->getLocale())?->name ?? $data->category?->translations->firstWhere('locale', 'az')?->name }}
+                                                </span>
                                                 <h4 class="grainger-title">
                                                     <a href="{{ route('web.product.show', $data->id) }}">{{ $name }}</a>
                                                 </h4>
@@ -231,6 +237,7 @@
                                                 @endif
                                             </div>
                                         </div>
+
                                     </div>
                                 </div>
                             @endforeach
@@ -245,6 +252,97 @@
             </div>
         </div>
     </div>
+
+    {{-- Yalnız yazıların sağdakı boşluğu doldurması üçün tənzimlənmiş CSS --}}
+    <style>
+        .grainger-product-card.style-ad-card {
+            display: flex !important;
+            flex-direction: column !important;
+            background: #fff !important;
+            border: 1px solid #eef0f2 !important;
+            border-radius: 12px !important;
+            padding: 12px !important;
+            margin-bottom: 20px !important;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02) !important;
+        }
+
+        .ad-image-box {
+            width: 100% !important;
+            height: 170px !important;
+            position: relative !important;
+            overflow: hidden !important;
+            border-radius: 10px !important;
+            background-color: #ffffff !important;
+            margin-bottom: 12px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        .ad-image-box a {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .ad-image-box img {
+            max-width: 100% !important;
+            max-height: 100% !important;
+            width: auto !important;
+            height: auto !important;
+            object-fit: contain !important;
+        }
+
+        .ad-heart-badge {
+            position: absolute !important;
+            top: 10px !important;
+            right: 10px !important;
+            z-index: 3 !important;
+            width: 30px !important;
+            height: 30px !important;
+            background: #ffffff !important;
+            border-radius: 50% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
+            cursor: pointer !important;
+        }
+
+        .ad-heart-badge i {
+            color: #4f5f6f !important;
+            font-size: 14px !important;
+        }
+
+        /* Yazı bloku tam genişliyə yayılır və sağdakı boşluğu doldurur */
+        .grainger-info-wrapper {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 6px !important;
+            width: 100% !important; /* Mətnlərin sağa doğru yayılmasını təmin edir */
+        }
+
+        .grainger-top-meta {
+            width: 100% !important;
+        }
+
+        /* Başlığın tək sətirdə sıxılıb qalmaması və sağa uzanması üçün */
+        .grainger-title {
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            margin: 5px 0 !important;
+            width: 100% !important;
+            display: block !important;
+        }
+
+        .grainger-title a {
+            display: block !important;
+            width: 100% !important;
+            white-space: normal !important; /* Yazı çox uzun olduqda alt sətirə keçə bilsin */
+        }
+    </style>
 
     <script type="text/javascript">
         // Swiper Sliders
@@ -295,10 +393,9 @@
     <script type="text/javascript">
         let page = 1;
         let isLoading = false;
-        let hasMoreData = true; // Bazada məhsul bitdikdə sorğuları tamamilə dayandırmaq üçün
+        let hasMoreData = true;
 
         $(window).scroll(function () {
-// Səhifənin aşağısına 300px qaldıqda avtomatik növbəti səhifəni çağırır
             if ($(window).scrollTop() + $(window).height() >= $(document).height() - 300) {
                 if (!isLoading && hasMoreData) {
                     page++;
@@ -311,26 +408,23 @@
             $.ajax({
                 url: '?page=' + pageNumber,
                 type: 'GET',
-                dataType: 'json', // JSON cavabı gözlədiyimizi bildiririk
+                dataType: 'json',
                 beforeSend: function () {
                     isLoading = true;
                     $('#product-loader').show();
                 }
             })
                 .done(function (response) {
-// Əgər gələn HTML tamamilə boşdursa
                     if (!response.html || response.html.trim() === "") {
                         hasMoreData = false;
                         $('#product-loader').html('<p class="text-muted" style="font-weight: bold; padding: 10px;">Bütün məhsullar yükləndi.</p>').show();
                         return;
                     }
 
-// Gələn təmiz HTML stringini mövcud siyahının sonuna əlavə edirik
                     $('#product-container').append(response.html);
                     $('#product-loader').hide();
                     isLoading = false;
 
-// Controller-də təyin etdiyimiz "hasMore" statusunu yoxlayırıq, false-dursa sürüşdürməni bağlayırıq
                     if (!response.hasMore) {
                         hasMoreData = false;
                         $('#product-loader').html('<p class="text-muted" style="font-weight: bold; padding: 10px;">Bütün məhsullar yükləndi.</p>').show();
@@ -343,7 +437,6 @@
                 });
         }
 
-        // Dinamik gələn yeni məhsulların da + və - düymələrinin işləməsi üçün "Event Delegation"
         $(document).on('click', '.grainger-qty-plus', function () {
             let input = $(this).siblings('.grainger-qty-input');
             let currentValue = parseInt(input.val()) || 1;
