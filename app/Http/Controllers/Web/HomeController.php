@@ -61,39 +61,38 @@ class HomeController extends Controller
 
 // Hər bir məhsul üçün təmiz HTML string formalaşdırırıq
                 $html .= '
-<div class="col-xs-12 col-sm-6 col-md-4 product-layout">
-<div class="grainger-product-card" data-product-id="'.$data->id.'">
-<div class="grainger-img-wrapper">
-<a href="'.$productUrl.'">
-<img src="'.$imgSrc.'" class="img-responsive" alt="'.$name.'">
-</a>
-</div>
-<div class="grainger-info-wrapper">
-<div class="grainger-top-meta">
-<span class="grainger-brand">'.$categoryName.'</span>
-<h4 class="grainger-title">
-<a href="'.$productUrl.'">'.$name.'</a>
-</h4>
-<div class="grainger-sku">Məhsul kodu '.$productCode.'</div>
-</div>
-<div class="grainger-price-block">
-<span class="price-label">Qiyməti</span>
-<div class="price-row">
-<span class="price-amount">'.$formattedPrice.' ₼</span>
-</div>
-</div>
-<div class="grainger-action-block">
-<div class="quantity-wrapper">
-<div class="qty-control-group">
-<button type="button" class="qty-btn grainger-qty-minus">-</button>
-<input type="number" value="1" min="1" class="qty-input grainger-qty-input">
-<button type="button" class="qty-btn grainger-qty-plus">+</button>
-</div>
-</div>
-'.$cartButton.'
-</div>
-</div>
-</div>
+<div class="col-xs-12 col-sm-6 col-md-3 product-layout">
+    <div class="grainger-product-card style-ad-card" data-product-id="'.$data->id.'">
+        <div class="ad-image-box">
+            <a href="'.$productUrl.'">
+                <img src="'.$imgSrc.'" class="img-responsive" alt="'.$name.'">
+            </a>
+            <div class="ad-heart-badge"><i class="fa fa-heart-o"></i></div>
+        </div>
+        <div class="grainger-info-wrapper">
+            <div class="grainger-top-meta">
+                <span class="grainger-brand">'.$categoryName.'</span>
+                <h4 class="grainger-title"><a href="'.$productUrl.'">'.$name.'</a></h4>
+                <div class="grainger-sku">Məhsul kodu '.$productCode.'</div>
+            </div>
+            <div class="grainger-price-block">
+                <span class="price-label">Qiyməti</span>
+                <div class="price-row">
+                    <span class="price-amount">'.$formattedPrice.' ₼</span>
+                </div>
+            </div>
+            <div class="grainger-action-block">
+                <div class="quantity-wrapper">
+                    <div class="qty-control-group">
+                        <button type="button" class="qty-btn grainger-qty-minus">-</button>
+                        <input type="number" value="1" min="1" class="qty-input grainger-qty-input">
+                        <button type="button" class="qty-btn grainger-qty-plus">+</button>
+                    </div>
+                </div>
+                '.$cartButton.'
+            </div>
+        </div>
+    </div>
 </div>';
             }
 
