@@ -48,6 +48,7 @@ class CartController extends Controller
 
         return view('site.cart.index', compact('cart', 'totalPrice', 'whatsAppLink'));
     }
+
     public function remove($id)
     {
         $cart = session()->get('cart', []);
@@ -63,9 +64,9 @@ class CartController extends Controller
     public function add(Request $request)
     {
         $productId = $request->input('product_id');
-        $quantity = $request->input('quantity', 1);
+        $quantity = max(1, (int)$request->input('quantity', 1));
 
-        $product = Product::with('translations')->find($productId);
+        $product = Product::with(['translations', 'images'])->find($productId);
 
         if (!$product) {
             return response()->json(['error' => 'Məhsul tapılmadı!'], 404);
@@ -76,9 +77,26 @@ class CartController extends Controller
 
         $productName = $translation->name ?? $product->name;
 
-        $currentPrice = ($product->price_type == 'retail')
-            ? $product->retail_price
-            : $product->wholesale_price;
+        // ===============================
+        // 🔥 PRICE PRIORITY LOGIC
+        // ===============================
+        $price = null;
+
+        // 1. ENDİRİM VARSA → ONU GÖTÜR
+        if (!empty($product->discount_price) && $product->discount_price > 0) {
+            $price = $product->discount_price;
+        }
+        // 2. WHolesale user
+        elseif (
+            auth()->guard('company')->check() &&
+            auth()->guard('company')->user()->price_type === 'wholesale'
+        ) {
+            $price = $product->wholesale_price;
+        }
+        // 3. default retail
+        else {
+            $price = $product->retail_price;
+        }
 
         $cart = session()->get('cart', []);
 
@@ -88,7 +106,7 @@ class CartController extends Controller
             $cart[$productId] = [
                 "name" => $productName,
                 "quantity" => $quantity,
-                "price" => $currentPrice,
+                "price" => $price,
                 "image" => $product->images->first()->image ?? null
             ];
         }
@@ -106,7 +124,9 @@ class CartController extends Controller
                 'name'      => $item['name'],
                 'price'     => number_format($item['price'], 2),
                 'quantity'  => $item['quantity'],
-                'image_url' => $item['image'] ? asset('storage/' . $item['image']) : asset('assets/no-image.png') // şəklin tam linki
+                'image_url' => $item['image']
+                    ? asset('storage/' . $item['image'])
+                    : asset('assets/no-image.png')
             ];
         }
 
@@ -116,4 +136,5 @@ class CartController extends Controller
             'cart_total' => number_format($total, 2),
             'cart_items' => $formattedItems
         ]);
-    }}
+    }
+}
