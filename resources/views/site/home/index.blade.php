@@ -1,6 +1,8 @@
 @extends('site.layouts.app')
 
 @section('content')
+
+
     <div id="common-home">
         <div class="slideshow">
             <div class="swiper-viewport">
@@ -54,7 +56,7 @@
                                         </div>
 
                                         <a href="{{ route('web.product.show', $product->id) }}" class="btn-shop-now">
-                                            SHOP NOW
+                                             {{ t('shop_now') }}
                                         </a>
                                     </div>
                                 </div>
@@ -74,10 +76,11 @@
             <div class="container">
                 <div class="related-products-block" style="margin-top: -50px;">
                     <div class="box-content box">
+                        @if($discounted)
                         <div class="page-title">
-                            <h3 class="grainger-main-heading">Endirimdə Olan Məhsullar</h3>
+                            <h3 class="grainger-main-heading">{{ t('sale_products') }}</h3>
                         </div>
-
+                        @endif
                         <div class="row display-flex-row">
                             @foreach($discounted as $data)
                                 @php
@@ -112,9 +115,7 @@
                                             <a href="{{ route('web.product.show', $data->id) }}">
                                                 <img src="{{ asset('storage/'.$img) }}" class="img-responsive" alt="{{ $name }}">
                                             </a>
-                                            <div class="ad-heart-badge">
-                                                <i class="fa fa-heart-o"></i>
-                                            </div>
+
                                         </div>
 
                                         <div class="grainger-info-wrapper">
@@ -166,7 +167,7 @@
                 <div class="related-products-block" style="margin-top: -50px;">
                     <div class="box-content box">
                         <div class="page-title">
-                            <h3 class="grainger-main-heading">Məhsullar</h3>
+                            <h3 class="grainger-main-heading">  {{ t('products') }}</h3>
                         </div>
 
                         <div class="row display-flex-row" id="product-container">
@@ -199,9 +200,7 @@
                                                     <img src="{{ asset('web/image/no-image.png') }}" class="img-responsive" alt="{{ $name }}">
                                                 @endif
                                             </a>
-                                            <div class="ad-heart-badge">
-                                                <i class="fa fa-heart-o"></i>
-                                            </div>
+
                                         </div>
 
                                         <div class="grainger-info-wrapper">
@@ -244,7 +243,7 @@
                         </div>
 
                         <div id="product-loader" class="text-center" style="display: none; padding: 30px; width: 100%;">
-                            <p><i class="fa fa-spinner fa-spin" style="font-size:32px; color: #333;"></i> Məhsullar yüklənir...</p>
+                            <p><i class="fa fa-spinner fa-spin" style="font-size:32px; color: #333;"></i>  {{ t('loading_products') }}</p>
                         </div>
 
                     </div>
@@ -254,95 +253,6 @@
     </div>
 
     {{-- Yalnız yazıların sağdakı boşluğu doldurması üçün tənzimlənmiş CSS --}}
-    <style>
-        .grainger-product-card.style-ad-card {
-            display: flex !important;
-            flex-direction: column !important;
-            background: #fff !important;
-            border: 1px solid #eef0f2 !important;
-            border-radius: 12px !important;
-            padding: 12px !important;
-            margin-bottom: 20px !important;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02) !important;
-        }
-
-        .ad-image-box {
-            width: 100% !important;
-            height: 170px !important;
-            position: relative !important;
-            overflow: hidden !important;
-            border-radius: 10px !important;
-            background-color: #ffffff !important;
-            margin-bottom: 12px !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-        }
-
-        .ad-image-box a {
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            width: 100% !important;
-            height: 100% !important;
-        }
-
-        .ad-image-box img {
-            max-width: 100% !important;
-            max-height: 100% !important;
-            width: auto !important;
-            height: auto !important;
-            object-fit: contain !important;
-        }
-
-        .ad-heart-badge {
-            position: absolute !important;
-            top: 10px !important;
-            right: 10px !important;
-            z-index: 3 !important;
-            width: 30px !important;
-            height: 30px !important;
-            background: #ffffff !important;
-            border-radius: 50% !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
-            cursor: pointer !important;
-        }
-
-        .ad-heart-badge i {
-            color: #4f5f6f !important;
-            font-size: 14px !important;
-        }
-
-        /* Yazı bloku tam genişliyə yayılır və sağdakı boşluğu doldurur */
-        .grainger-info-wrapper {
-            display: flex !important;
-            flex-direction: column !important;
-            gap: 6px !important;
-            width: 100% !important; /* Mətnlərin sağa doğru yayılmasını təmin edir */
-        }
-
-        .grainger-top-meta {
-            width: 100% !important;
-        }
-
-        /* Başlığın tək sətirdə sıxılıb qalmaması və sağa uzanması üçün */
-        .grainger-title {
-            font-size: 14px !important;
-            font-weight: 600 !important;
-            margin: 5px 0 !important;
-            width: 100% !important;
-            display: block !important;
-        }
-
-        .grainger-title a {
-            display: block !important;
-            width: 100% !important;
-            white-space: normal !important; /* Yazı çox uzun olduqda alt sətirə keçə bilsin */
-        }
-    </style>
 
     <script type="text/javascript">
         // Swiper Sliders

@@ -162,7 +162,7 @@
 
                                 <select name="category_id" class="form-control">
 
-                                    <option value="0">All Categories</option>
+                                    <option value="0">{{ t('categories') }}</option>
 
                                     @php
                                         $renderOptions($menuCategories);
@@ -175,12 +175,12 @@
                             {{-- SEARCH INPUT --}}
                             <input type="text"
                                    name="search"
-                                   placeholder="Search..."
+                                   placeholder="   {{ t('search_title') }}"
                                    class="form-control search-input-flex"/>
 
                             {{-- BUTTON --}}
                             <button type="submit" class="btn-search-submit-flex">
-                                SEARCH
+                                  {{ t('search_title') }}
                             </button>
 
                         </div>
@@ -208,14 +208,14 @@
                                     class="btn btn-inverse btn-block btn-lg dropdown-toggle">
 
     <span id="cart-total">
-        <span class="hidden-sm hidden-xs">My Cart:</span>
+        <span class="hidden-sm hidden-xs">{{ t('my_cart') }}</span>
 
         <span class="cart-item">
             {{ $cartCount }}
         </span>
 
         <span class="hidden-sm hidden-xs">
-            - ${{ number_format($cartTotal, 2) }}
+            - {{ number_format($cartTotal, 2) }}
         </span>
     </span>
 
@@ -250,7 +250,7 @@
 
                                     <li style="text-align:center; padding:10px;">
                                         <a href="{{ route('cart.index') }}" class="btn btn-warning btn-sm">
-                                            View Cart
+                                            {{ t('view_cart') }}
                                         </a>
                                     </li>
 
@@ -258,7 +258,7 @@
 
                                     <li>
                                         <p class="text-center product-cart-empty">
-                                            Your shopping cart is empty!
+                                            {{ t('cart_empty') }}
                                         </p>
                                     </li>
 
@@ -303,7 +303,7 @@
 
                         <li class="menulist home">
                             <a id="home" href="{{ route('home') }}">
-                                Home
+                                  {{ t('home_menu_title') }}
                             </a>
                         </li>
                         @php
@@ -402,7 +402,7 @@
                         @endforeach
                         <li class="blog">
                             <a href="{{ route('web.contact') }}">
-                                Contact
+                                   {{ t('contact_menu_title') }}
                             </a>
                         </li>
 
@@ -417,8 +417,8 @@
                 <i class="icon-phone"></i>
 
                 <div class="customer-detail">
-                    <span class="call">Customer Support:</span>
-                    <span>123-456-7890</span>
+                    <span class="call">{{ t('customer_support') }}</span>
+                    <span>050 860 88 85</span>
                 </div>
 
             </div>

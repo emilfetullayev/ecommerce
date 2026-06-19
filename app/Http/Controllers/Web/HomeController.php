@@ -112,6 +112,7 @@ class HomeController extends Controller
         $relatedProducts = Product::with('images')
             ->where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
+            ->where('is_discounted', 0)
             ->latest()
             ->take(8)
             ->get();

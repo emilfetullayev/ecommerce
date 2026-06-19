@@ -2,7 +2,7 @@
     <div class="container">
         <div class="top-left">
             <div class="free-delivery hidden-sm hidden-xs">
-                <span>Free Delivery:</span> <span>Take advantage of our time to save event</span>
+                <span>{{ t('navbar_title') }}</span>
             </div>
         </div>
         <div class="top-right">
@@ -13,7 +13,7 @@
                         <span>{{ Auth::guard('company')->user()->company_name }}</span>
                     @else
                         <i class="fa fa-user-o"></i>
-                        <span>My Account</span>
+                        <span>{{ t('my_account') }}</span>
                     @endif
 
                     <i class="fa fa-angle-down"></i>
@@ -23,7 +23,7 @@
                     @guest('company')
                         <li>
                             <a href="{{ route('company.login') }}">
-                                <i class="fa fa-user-plus"></i> Login / Register
+                                <i class="fa fa-user-plus"></i>  {{ t('login_register') }}
                             </a>
                         </li>
                     @endguest
@@ -32,7 +32,7 @@
                     @auth('company')
                         <li>
                             <a href="{{ route('cart.index') }}">
-                                <i class="fa fa-shopping-cart"></i> Səbətim
+                                <i class="fa fa-shopping-cart"></i>  {{ t('shopping_cart') }}
                             </a>
                         </li>
 
@@ -42,7 +42,7 @@
                             <a href="{{ route('company.logout') }}"
                                onclick="event.preventDefault(); document.getElementById('company-logout-form').submit();"
                                style="color: #d9534f;">
-                                <i class="fa fa-sign-out"></i> Çıxış et
+                                <i class="fa fa-sign-out"></i>{{ t('logout') }}
                             </a>
 
                             <form id="company-logout-form"
@@ -56,7 +56,6 @@
                 </ul>
             </div>
             @php
-                // Cari aktiv dili və onun görünəcək adını təyin edirik
                 $currentLocale = app()->getLocale();
 
                 $locales = [
@@ -67,7 +66,6 @@
 
                 ];
 
-                // Əgər sistemdə naməlum dil gələrsə, standart olaraq az göstərsin
                 $currentLang = $locales[$currentLocale] ?? $locales['az'];
             @endphp
 
@@ -76,15 +74,13 @@
                     <div class="btn-group">
                         {{-- Aktiv Dil Düyməsi --}}
                         <button class="btn btn-link dropdown-toggle" data-toggle="dropdown">
-                            <span class="drop-text">Language</span>
+                            <span class="drop-text"> {{ t('language_title') }}</span>
                             <span class="code">{{ $currentLang['code'] }}</span>
                             <i class="fa fa-angle-down"></i>
                         </button>
 
-                        {{-- Dil Siyahısı Açılan Menyu --}}
                         <ul class="dropdown-menu language-dropdown lang">
                             @foreach($locales as $code => $lang)
-                                {{-- Cari seçili dili siyahıda təkrar göstərməmək üçün (istəsəniz silə bilərsiniz) --}}
                                 @if($code !== $currentLocale)
                                     <li>
                                         <a href="{{ route('lang.switch', $code) }}"

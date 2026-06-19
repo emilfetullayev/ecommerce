@@ -1,3 +1,5 @@
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <footer class="mt-80">
     <div class="container">
         <div class="row">
@@ -15,13 +17,13 @@
                             <li>
                                 <div class="phone">
                                     <div class="contact_title">{{ t('phone_title') }}:</div>
-                                    <div class="contact_site">+91 123 456 789</div>
+                                    <div class="contact_site">050 860 88 85</div>
                                 </div>
                             </li>
                             <li>
                                 <div class="email">
                                     <div class="contact_title">email:</div>
-                                    <div class="contact_site"><a href="mailto:info@Yourstore.com">demo@Yourstore.com</a>
+                                    <div class="contact_site"><a href="mailto:canpowertoolsaz@gmail.com">canpowertoolsaz@gmail.com</a>
                                     </div>
                                 </div>
                             </li>
@@ -30,31 +32,20 @@
                 </div>
                 <div class="col-sm-2">
                     <div class="footer-content">
-                        <h5>{{ t('contact_title') }}</h5>
-                        <ul class="list-unstyled">
-{{--                            <li><a href="index8816.html?route=information/information&amp;information_id=4">About Us</a>--}}
-{{--                            </li>--}}
-                            <li><a href="{{ route('web.contact') }}">{{ t('contact_title') }}</a></li>
-                        </ul>
+                        <a href="{{ route('web.contact') }}"> <h5>{{ t('contact_title') }}</h5></a>
                     </div>
                 </div>
 
 
                 <div class="col-sm-2">
                     <div class="footer-content">
-                        <h5>{{ t('footer_products') }}</h5>
-                        <ul class="list-unstyled">
-                            <li><a href="{{ route('web.product') }}">{{ t('all_products') }}</a></li>
-                        </ul>
+                        <a href="{{ route('web.product') }}"><h5>{{ t('all_products') }}</h5></a>
                     </div>
                 </div>
 
                 <div class="col-sm-2">
                     <div class="footer-content">
-                        <h5>{{ t('my_account') }}</h5>
-                        <ul class="list-unstyled">
-                            <li><a href="{{ route('cart.index') }}">{{ t('order_history') }}</a></li>
-                        </ul>
+                        <a href="{{ route('cart.index') }}"><h5>{{ t('order_history') }}</h5></a>
                     </div>
                 </div>
             </div>
@@ -63,13 +54,19 @@
     <div class="footer_bottom">
         <div class="container">
             <div class="position-footer-bottom">
-                <div class="social-media"><a href="#"><i class="fa fa-facebook"></i></a> <a href="#"><i
-                            class="fa fa-twitter"></i></a> <a href="#"><i class="fa fa-youtube-play"></i></a> <a
-                        href="#"><i class="fa fa-google-plus"></i></a> <a href="#"> <i
-                            class="fa fa-pinterest-p"></i></a></div>
+                <div class="social-media">
+                    <a href="https://www.instagram.com/can_construction_tools?utm_source=qr&igsh=YWloaDJpb21naWYy" target="_blank">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                    <a href="https://www.tiktok.com/@can_power_tools?_r=1&_t=ZS-97Egh7fPvy1" target="_blank">
+                        <i class="fa-brands fa-tiktok"></i>
+                    </a>
+                </div>
                 <div class="payment-link"><img src="image/catalog/payment.png" alt=""></div>
             </div>
-            <p class="powered">Powered By <a href="http://www.opencart.com/">OpenCart</a> Your Store &copy; 2026</p>
+            <p class="powered">
+                {{ t('copyright') }} &copy; 2026
+            </p>
         </div>
     </div>
 </footer>

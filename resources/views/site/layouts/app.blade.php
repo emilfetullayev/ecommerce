@@ -72,6 +72,9 @@
 </head>
 <body class="common-home">
 
+
+
+
 <style>
 
     /* Səbət Paneli Əsas Struktur */
@@ -691,8 +694,8 @@ Grainger Style Product Card - TAM VƏ YEKUN RESPONSIVE CSS KODU
 
     /* Orta Hissə: Qiymət Bloku */
     .grainger-price-block {
-        margin-bottom: 15px !important;
-        margin-top: 8px !important;
+        margin-bottom: 5px !important;
+        margin-top: -6px !important;
     }
 
     .grainger-price-block .price-label {
@@ -722,6 +725,8 @@ Grainger Style Product Card - TAM VƏ YEKUN RESPONSIVE CSS KODU
         font-size: 22px !important;
         font-weight: 700 !important;
         color: #007a3d !important;
+        margin-top: 6px;
+
     }
 
     .grainger-price-block .price-unit {
@@ -897,7 +902,7 @@ Grainger Style Product Card - TAM VƏ YEKUN RESPONSIVE CSS KODU
         }
 
         .grainger-price-block {
-            margin-bottom: 15px !important;
+            margin-bottom: -12px !important;
         }
 
         .grainger-price-block .price-amount {
@@ -994,6 +999,79 @@ Grainger Style Product Card - TAM VƏ YEKUN RESPONSIVE CSS KODU
 </script>
 
 @yield('content')
+
+<style>
+    .grainger-product-card.style-ad-card {
+        display: flex !important;
+        flex-direction: column !important;
+        background: #fff !important;
+        border: 1px solid #eef0f2 !important;
+        border-radius: 12px !important;
+        padding: 12px !important;
+        margin-bottom: 20px !important;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.02) !important;
+    }
+
+    .ad-image-box {
+        width: 100% !important;
+        height: 170px !important;
+        position: relative !important;
+        overflow: hidden !important;
+        border-radius: 10px !important;
+        background-color: #ffffff !important;
+        margin-bottom: 12px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    .ad-image-box a {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    .ad-image-box img {
+        max-width: 100% !important;
+        max-height: 100% !important;
+        width: auto !important;
+        height: auto !important;
+        object-fit: contain !important;
+    }
+
+
+
+
+
+    /* Yazı bloku tam genişliyə yayılır və sağdakı boşluğu doldurur */
+    .grainger-info-wrapper {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 6px !important;
+        width: 100% !important; /* Mətnlərin sağa doğru yayılmasını təmin edir */
+    }
+
+    .grainger-top-meta {
+        width: 100% !important;
+    }
+
+    /* Başlığın tək sətirdə sıxılıb qalmaması və sağa uzanması üçün */
+    .grainger-title {
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        margin: 5px 0 !important;
+        width: 100% !important;
+        display: block !important;
+    }
+
+    .grainger-title a {
+        display: block !important;
+        width: 100% !important;
+        white-space: normal !important; /* Yazı çox uzun olduqda alt sətirə keçə bilsin */
+    }
+</style>
 
 
 <div id="right-cart-sidebar" class="cart-sidebar">
