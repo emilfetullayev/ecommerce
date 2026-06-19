@@ -202,7 +202,7 @@ class ProductController extends Controller
             $query->whereIn('category_id', $categoryIds);
         }
 
-        $products = $query->latest()->paginate(2);
+        $products = $query->latest()->get();
 
         return view('site.product.index', compact('products'));
     }
