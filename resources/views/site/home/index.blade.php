@@ -76,7 +76,7 @@
             <div class="container">
                 <div class="related-products-block" style="margin-top: -50px;">
                     <div class="box-content box">
-                        @if(!empty($discounted))
+                        @if($discounted->isNotEmpty())
                             <div class="page-title">
                                 <h3 class="grainger-main-heading">{{ t('sale_products') }}</h3>
                             </div>
