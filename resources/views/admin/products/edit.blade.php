@@ -231,7 +231,7 @@
 
                                     <button type="button"
                                             class="remove-image"
-                                            data-id="{{ $img->id }}"
+                                            data-url="{{ route('products.image.delete', $img->id) }}"
                                             style="position:absolute;top:-8px;right:-8px;width:22px;height:22px;border-radius:50%;border:none;background:red;color:white;">
                                         ×
                                     </button>
@@ -251,5 +251,56 @@
         </div>
 
     </div>
+
+    <script>
+        document.addEventListener('click', function (e) {
+
+            if (e.target.classList.contains('remove-image')) {
+
+                let btn = e.target;
+                let url = btn.dataset.url;
+
+                if (!url) {
+                    alert('URL tapılmadı');
+                    return;
+                }
+
+                if (!confirm('Şəkli silmək istəyirsən?')) {
+                    return;
+                }
+
+                fetch(url, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                })
+                    .then(async (res) => {
+
+                        if (!res.ok) {
+                            throw new Error('Server error: ' + res.status);
+                        }
+
+                        return res.json();
+                    })
+                    .then(data => {
+
+                        if (data.success) {
+                            btn.closest('.img-box').remove();
+                        } else {
+                            alert(data.message ?? 'Silinmədi');
+                        }
+
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        alert('Xəta baş verdi');
+                    });
+
+            }
+
+        });
+    </script>
 
 @endsection

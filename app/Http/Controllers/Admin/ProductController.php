@@ -265,8 +265,9 @@ class ProductController extends Controller
 
         $image->delete();
 
-        return back()->with('success', 'Şəkil silindi');
-    }
+        return response()->json([
+            'success' => true,
+        ]);    }
 
     /**
      * DELETE PRODUCT
