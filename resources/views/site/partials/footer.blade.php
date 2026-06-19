@@ -1,5 +1,12 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+    .product-link {
+        display: block;
+            width: 100%;
+    }
+</style>
+
 <footer class="mt-80">
     <div class="container">
         <div class="row">
@@ -32,20 +39,20 @@
                 </div>
                 <div class="col-sm-2">
                     <div class="footer-content">
-                        <a href="{{ route('web.contact') }}"> <h5>{{ t('contact_title') }}</h5></a>
+                        <a href="{{ route('web.contact') }}" class="product-link"> <h5>{{ t('contact_title') }}</h5></a>
                     </div>
                 </div>
 
 
                 <div class="col-sm-2">
                     <div class="footer-content">
-                        <a href="{{ route('web.product') }}"><h5>{{ t('all_products') }}</h5></a>
+                        <a href="{{ route('web.product') }}" class="product-link"><h5>{{ t('all_products') }}</h5></a>
                     </div>
                 </div>
 
                 <div class="col-sm-2">
                     <div class="footer-content">
-                        <a href="{{ route('cart.index') }}"><h5>{{ t('order_history') }}</h5></a>
+                        <a href="{{ route('cart.index') }}" class="product-link"><h5>{{ t('order_history') }}</h5></a>
                     </div>
                 </div>
             </div>
