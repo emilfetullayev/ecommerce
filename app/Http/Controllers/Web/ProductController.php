@@ -87,24 +87,96 @@ class ProductController extends Controller
     }
 
 
-    public function byCategory($id)
+    public function byCategory(Request $request, $id)
     {
         $category = Category::findOrFail($id);
 
+        // 🔥 parent + child category IDs
         $categoryIds = Category::where('id', $id)
             ->orWhere('parent_id', $id)
-            ->pluck('id')
-            ->toArray();
+            ->pluck('id');
 
-        $products = Product::with([
+        $query = Product::with([
             'images',
+            'category.translations',
             'translations' => function ($q) {
-                $q->where('locale', 'az');
+                $q->where('locale', app()->getLocale());
             }
         ])
-            ->whereIn('category_id', $categoryIds)
-            ->latest()
-            ->paginate(2);
+            ->whereIn('category_id', $categoryIds);
+
+        $products = $query->latest()->paginate(6);
+
+        // 🔥 AJAX SUPPORT (index ilə eyni sistem)
+        if ($request->ajax()) {
+
+            $html = '';
+
+            foreach ($products as $data) {
+
+                $translation = $data->translations->first();
+
+                $name = $translation->name ?? $data->name;
+
+                // 💰 price logic (company varsa wholesale)
+                $price = $data->retail_price;
+
+                if (auth()->guard('company')->check() &&
+                    auth()->guard('company')->user()->price_type === 'wholesale') {
+                    $price = $data->wholesale_price;
+                }
+
+                $img = optional($data->images->first())->image;
+                $imgSrc = $img ? asset('storage/' . $img) : asset('web/image/no-image.png');
+
+                $categoryName = $data->category?->translations
+                    ->firstWhere('locale', app()->getLocale())?->name
+                    ?? $data->category?->translations
+                        ->firstWhere('locale', 'az')?->name;
+
+                $productUrl = route('web.product.show', $data->id);
+                $loginUrl = route('company.login');
+
+                $cartButton = auth()->guard('company')->check()
+                    ? '<button type="button" class="btn-cart grainger-btn-cart">Sepete ekle</button>'
+                    : '<button type="button" onclick="window.location.href=\'' . $loginUrl . '\'" class="btn-login">Sepete ekle</button>';
+
+                $html .= '
+<div class="col-xs-12 col-sm-6 col-md-3 product-layout">
+    <div class="grainger-product-card" data-product-id="' . $data->id . '">
+
+        <div class="ad-image-box">
+            <a href="' . $productUrl . '">
+                <img src="' . $imgSrc . '" class="img-responsive">
+            </a>
+        </div>
+
+        <div class="grainger-info-wrapper">
+
+            <span class="grainger-brand">' . $categoryName . '</span>
+
+            <h4 class="grainger-title">
+                <a href="' . $productUrl . '">' . $name . '</a>
+            </h4>
+
+            <div class="grainger-price-block">
+                <span class="price-amount">' . number_format($price, 2) . ' ₼</span>
+            </div>
+
+            ' . $cartButton . '
+
+        </div>
+
+    </div>
+</div>';
+            }
+
+            return response()->json([
+                'html' => $html,
+                'hasMore' => $products->hasMorePages()
+            ]);
+        }
+
         return view('site.product.index', compact('products', 'category'));
     }
 
