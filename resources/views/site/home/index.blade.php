@@ -76,10 +76,10 @@
             <div class="container">
                 <div class="related-products-block" style="margin-top: -50px;">
                     <div class="box-content box">
-                        @if($discounted)
-                        <div class="page-title">
-                            <h3 class="grainger-main-heading">{{ t('sale_products') }}</h3>
-                        </div>
+                        @if(!empty($discounted))
+                            <div class="page-title">
+                                <h3 class="grainger-main-heading">{{ t('sale_products') }}</h3>
+                            </div>
                         @endif
                         <div class="row display-flex-row">
                             @foreach($discounted as $data)
