@@ -130,4 +130,67 @@
 
         </div>
     </div>
+
+
+    <script type="text/javascript">
+        let page = 1;
+        let isLoading = false;
+        let hasMoreData = true;
+
+        $(window).scroll(function () {
+            if ($(window).scrollTop() + $(window).height() >= $(document).height() - 300) {
+                if (!isLoading && hasMoreData) {
+                    page++;
+                    loadProducts(page);
+                }
+            }
+        });
+
+        function loadProducts(pageNumber) {
+            $.ajax({
+                url: '?page=' + pageNumber,
+                type: 'GET',
+                dataType: 'json',
+                beforeSend: function () {
+                    isLoading = true;
+                    $('#product-loader').show();
+                }
+            })
+                .done(function (response) {
+                    if (!response.html || response.html.trim() === "") {
+                        hasMoreData = false;
+                        $('#product-loader').html('<p class="text-muted" style="font-weight: bold; padding: 10px;">Bütün məhsullar yükləndi.</p>').show();
+                        return;
+                    }
+
+                    $('#product-container').append(response.html);
+                    $('#product-loader').hide();
+                    isLoading = false;
+
+                    if (!response.hasMore) {
+                        hasMoreData = false;
+                        $('#product-loader').html('<p class="text-muted" style="font-weight: bold; padding: 10px;">Bütün məhsullar yükləndi.</p>').show();
+                    }
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    console.error('Xəta baş verdi: ', textStatus, errorThrown);
+                    isLoading = false;
+                    $('#product-loader').hide();
+                });
+        }
+
+        $(document).on('click', '.grainger-qty-plus', function () {
+            let input = $(this).siblings('.grainger-qty-input');
+            let currentValue = parseInt(input.val()) || 1;
+            input.val(currentValue + 1);
+        });
+
+        $(document).on('click', '.grainger-qty-minus', function () {
+            let input = $(this).siblings('.grainger-qty-input');
+            let currentValue = parseInt(input.val()) || 1;
+            if (currentValue > 1) {
+                input.val(currentValue - 1);
+            }
+        });
+    </script>
 @endsection
