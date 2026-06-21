@@ -75,9 +75,9 @@
                                                             </div>
                                                         </div>
                                                         @if(auth()->guard('company')->check())
-                                                            <button type="button" class="btn-cart grainger-btn-cart">Sepete ekle</button>
+                                                            <button type="button" class="btn-cart grainger-btn-cart"> {{ t('add_to_cart') }}</button>
                                                         @else
-                                                            <button type="button" onclick="window.location.href='{{ route('company.login') }}'" class="btn-login">Sepete ekle</button>
+                                                            <button type="button" onclick="window.location.href='{{ route('company.login') }}'" class="btn-login">{{ t('add_to_cart') }}</button>
                                                         @endif
                                                     </div>
                                                 </div>

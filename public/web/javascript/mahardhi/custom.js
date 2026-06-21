@@ -51,19 +51,14 @@ let prevWidth = null;
 
 			// left, right
 			$("#column-left .box-category .toggle-open, #column-right .box-category .toggle-open").remove();
-			$("#column-left .box-category h3, #column-right .box-category h3").append("<span class='toggle-open'><i class='fa fa-chevron-down'></i></span>");
 
 			$("#column-left .box-content .toggle-open, #column-right .box-content .toggle-open").remove();
-			$("#column-left .box-content h3, #column-right .box-content h3").append("<span class='toggle-open'><i class='fa fa-chevron-down'></i></span>");
 
 			$('#column-left ul.parent, #column-right ul.parent').hide();
 			$('#column-left .filter_box, #column-right .filter_box, #column-left .block_box, #column-right .block_box, #column-left .box-content ul, #column-right .box-content ul').hide();
 
 			// footer
-			if ($(".footer-top .toggle-open").length == 0) {
-				$(".footer-top h5").append("<span class='toggle-open'><i class='fa fa-chevron-down'></i></span>");
-				$('.footer-top ul.list-unstyled').hide();
-			}
+
 		} else {
 			$('#column-right').insertAfter('#content');
 			$('#column-left').insertBefore('#content');

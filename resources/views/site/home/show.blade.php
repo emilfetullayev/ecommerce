@@ -5,7 +5,7 @@
 @section('content')
     {{-- Yalnız yazıların sağdakı boşluğu doldurması üçün tənzimlənmiş CSS --}}
 
-<div id="product-page" class="container">
+<div id="product-page" class="container" style="margin-top: 40px;">
     @include('site.partials.breadcrumb')
     <div class="row">
         <div id="content" class="col-sm-12">
@@ -17,15 +17,13 @@
                 $name = $translation->name ?? $product->name;
                 $description = $translation->description ?? $product->description;
 
-                // Bazadakı standart qiymət (Pərakəndə və ya Topdan)
                 $normalPrice = ($product->price_type === 'wholesale')
                     ? $product->wholesale_price
                     : $product->retail_price;
 
-                // Əgər endirim aktivdirsə (is_discounted == 1 və discount_price boş deyilsə)
                 if ($product->is_discounted == 1 && !empty($product->discount_price)) {
-                    $currentPrice = $product->discount_price; // Satış qiyməti endirimli qiymət olur
-                    $oldPrice = $normalPrice;                // Üstü xəttli qiymət köhnə qiymət olur
+                    $currentPrice = $product->discount_price;
+                    $oldPrice = $normalPrice;
                     $hasDiscount = true;
                 } else {
                     $currentPrice = $normalPrice;
@@ -34,7 +32,6 @@
                 }
             @endphp
 
-            <h2 class="page_title">{{ $name }}</h2>
             <div class="pro-deatil row">
                 <div class="col-sm-6 product-img">
                     <div class="thumbnails">
@@ -101,7 +98,7 @@
                     <ul class="list-unstyled">
                         <li>
                             <div class="detail-price-block" style="display: block !important; margin: 10px 0 !important;">
-                                <span class="detail-price-label" style="display: block !important; font-size: 14px; color: #555; margin-bottom: 5px; font-weight: 600;">Web Fiyatı</span>
+                                <span class="detail-price-label" style="display: block !important; font-size: 14px; color: #555; margin-bottom: 5px; font-weight: 600;"> {{ t('product_price') }}</span>
                                 <div class="detail-price-row" style="display: flex !important; align-items: baseline !important; gap: 10px !important;">
                                     @if($hasDiscount)
                                         <span class="price-old-detail" style="font-size: 18px !important; color: #a5a5a5 !important; text-decoration: line-through !important; -webkit-text-decoration-line: line-through !important; font-weight: normal !important; display: inline-block !important;">
@@ -111,7 +108,7 @@
                                     <span class="price-amount-detail" style="font-size: 32px !important; font-weight: 800 !important; color: #007a3d !important; display: inline-block !important;">
                                     {{ number_format($currentPrice, 2) }} ₼
                                 </span>
-                                    <span class="price-unit-detail" style="font-size: 15px !important; color: #555 !important; font-weight: normal !important; display: inline-block !important;">/ adet</span>
+                                    <span class="price-unit-detail" style="font-size: 15px !important; color: #555 !important; font-weight: normal !important; display: inline-block !important;">/ {{ t('count') }}</span>
                                 </div>
                             </div>
                         </li>
@@ -121,7 +118,7 @@
                     <div id="product" class="product-options">
                         <div class="form-group">
                             <div class="product-btn-quantity">
-                                <label class="control-label qty" for="input-quantity">Qty</label>
+                                <label class="control-label qty" for="input-quantity">{{ t('count') }}</label>
 
                                 <div class="minus-plus">
                                     <button type="button" class="minus detal-qty-minus"><i class="fa fa-minus"></i></button>
@@ -131,11 +128,11 @@
 
                                 @if(auth()->guard('company')->check())
                                     <button type="button" id="button-cart" data-loading-text="Loading..." class="btn btn-primary btn-lg btn-block">
-                                        <i class="icon-bag"></i><span>Add to Cart</span>
+                                        <i class="icon-bag"></i><span>{{ t('add_to_cart') }}</span>
                                     </button>
                                 @else
                                     <button type="button" id="fake-button-cart" onclick="window.location.href='{{ route('company.login') }}'" data-loading-text="Loading..." class="btn btn-primary btn-lg btn-block">
-                                        <i class="icon-bag"></i><span>Add to Cart</span>
+                                        <i class="icon-bag"></i><span>{{ t('add_to_cart') }}</span>
                                     </button>
                                 @endif
 
@@ -158,7 +155,7 @@
             <div class="col-sm-12">
                 <div class="row propage-tab">
                     <ul class="nav nav-tabs">
-                        <li class="active"><a href="#tab-description" data-toggle="tab">Description</a></li>
+                        <li class="active"><a href="#tab-description" data-toggle="tab">{{ t('description') }}</a></li>
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="tab-description">
@@ -173,7 +170,7 @@
                     <div class="related-products-block" style="margin-top: -50px;">
                         <div class="box-content box">
                             <div class="page-title">
-                                <h3 class="grainger-main-heading">Məhsullar</h3>
+                                <h3 class="grainger-main-heading"> {{ t('related_products') }}</h3>
                             </div>
 
                             <div class="row display-flex-row" id="product-container">
@@ -217,11 +214,11 @@
                                                     <h4 class="grainger-title">
                                                         <a href="{{ route('web.product.show', $data->id) }}">{{ $name }}</a>
                                                     </h4>
-                                                    <div class="grainger-sku">Məhsul kodu {{ $data->code ?? '' }}</div>
+                                                    <div class="grainger-sku">{{ t('product_code') }} {{ $data->code ?? '' }}</div>
                                                 </div>
 
                                                 <div class="grainger-price-block">
-                                                    <span class="price-label">Qiyməti</span>
+                                                    <span class="price-label"> {{ t('product_price') }}</span>
                                                     <div class="price-row">
                                                         <span class="price-amount">{{ number_format($price, 2) }} ₼</span>
                                                     </div>
@@ -236,9 +233,9 @@
                                                         </div>
                                                     </div>
                                                     @if(auth()->guard('company')->check())
-                                                        <button type="button" class="btn-cart grainger-btn-cart">Sepete ekle</button>
+                                                        <button type="button" class="btn-cart grainger-btn-cart">{{ t('add_to_cart') }}</button>
                                                     @else
-                                                        <button type="button" onclick="window.location.href='{{ route('company.login') }}'" class="btn-login">Sepete ekle</button>
+                                                        <button type="button" onclick="window.location.href='{{ route('company.login') }}'" class="btn-login">{{ t('add_to_cart') }}</button>
                                                     @endif
                                                 </div>
                                             </div>
@@ -249,7 +246,7 @@
                             </div>
 
                             <div id="product-loader" class="text-center" style="display: none; padding: 30px; width: 100%;">
-                                <p><i class="fa fa-spinner fa-spin" style="font-size:32px; color: #333;"></i> Məhsullar yüklənir...</p>
+                                <p><i class="fa fa-spinner fa-spin" style="font-size:32px; color: #333;"></i> {{ t('loading_products') }}</p>
                             </div>
 
                         </div>

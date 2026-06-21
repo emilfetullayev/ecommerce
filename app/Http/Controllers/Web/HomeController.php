@@ -56,10 +56,9 @@ class HomeController extends Controller
                 $loginUrl = route('company.login');
 
                 $cartButton = auth()->guard('company')->check()
-                    ? '<button type="button" class="btn-cart grainger-btn-cart">Sepete ekle</button>'
-                    : '<button type="button" onclick="window.location.href=\''.$loginUrl.'\'" class="btn-login">Sepete ekle</button>';
+                    ? '<button type="button" class="btn-cart grainger-btn-cart">' .t('add_to_cart'). '</button>'
+                    : '<button type="button" onclick="window.location.href=\''.$loginUrl.'\'" class="btn-login">' .t('add_to_cart'). '</button>';
 
-// Hər bir məhsul üçün təmiz HTML string formalaşdırırıq
                 $html .= '
 <div class="col-xs-12 col-sm-6 col-md-3 product-layout">
     <div class="grainger-product-card style-ad-card" data-product-id="'.$data->id.'">
