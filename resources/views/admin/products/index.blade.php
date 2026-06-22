@@ -146,11 +146,18 @@
                                 <option value="inactive">Inactive</option>
                             </select>
 
+                                <input type="number" name="sort_order" class="form-control"
+                                       placeholder="Sıra (0, 1, 2...)"
+                                       value="{{ old('sort_order', $product->sort_order ?? 0) }}">
+                                <label>Seçilmiş (önə çıxar)</label>
+
+
                             {{-- FEATURED --}}
                             <div class="form-check mb-1">
                                 <input type="checkbox" name="is_featured" value="1" class="form-check-input" id="featured">
                                 <label for="featured">Featured</label>
                             </div>
+
 
                             <div class="form-check mb-2">
                                 <input type="checkbox" name="is_discounted" value="1" class="form-check-input" id="discounted">

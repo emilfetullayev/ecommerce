@@ -24,15 +24,13 @@ class HomeController extends Controller
             }
         ])->where('is_discounted', 1)->latest()->get();
 
-// 3. Adi Məhsullar (Bazada nə qədər varsa, hər dəfə 9-9 gətirəcək)
         $products = Product::with([
             'images',
             'translations' => function ($q) {
                 $q->where('locale', app()->getLocale());
             }
-        ])->where('is_discounted', 0)->latest()->paginate(6);
+        ])->orderByRaw('sort_order = 0 ASC, sort_order ASC')->orderBy('sort_order')->where('is_discounted', 0)->latest()->paginate(6);
 
-// --- KRİTİK HİSSƏ: Əgər AJAX sorğusudursa (Səhifə aşağı sürüşdürülübsə) ---
         if ($request->ajax()) {
             $html = '';
             foreach ($products as $data) {

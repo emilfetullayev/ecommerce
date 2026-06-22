@@ -16,7 +16,7 @@ class ProductController extends Controller
             'translations' => function ($q) {
                 $q->where('locale', app()->getLocale());
             }
-        ])->where('is_discounted', 0)->latest()->paginate(6);
+        ])->orderByRaw('sort_order = 0 ASC, sort_order ASC')->orderBy('sort_order')->orderBy('sort_order')->where('is_discounted', 0)->latest()->paginate(6);
 
         if ($request->ajax()) {
             $html = '';

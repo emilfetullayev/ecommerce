@@ -1127,39 +1127,6 @@ Grainger Style Product Card - TAM VƏ YEKUN RESPONSIVE CSS KODU
         // ==========================================================================
         // 1. MİQDAR ARTIRMA VƏ AZALTMA FUNKSİYASI (+ / -)
         // ==========================================================================
-        document.addEventListener('click', function (e) {
-
-            // --- PLUS (+) DÜYMƏSİ ---
-            var btnPlus = e.target.closest('.detal-qty-plus, .grainger-qty-plus');
-            if (btnPlus) {
-                e.preventDefault();
-
-                let input = btnPlus.classList.contains('detal-qty-plus')
-                    ? document.getElementById('input-quantity')
-                    : btnPlus.parentElement.querySelector('.grainger-qty-input');
-
-                if (input) {
-                    input.value = (parseInt(input.value) || 1) + 1;
-                }
-            }
-
-            // --- MINUS (-) DÜYMƏSİ ---
-            var btnMinus = e.target.closest('.detal-qty-minus, .grainger-qty-minus');
-            if (btnMinus) {
-                e.preventDefault();
-
-                let input = btnMinus.classList.contains('detal-qty-minus')
-                    ? document.getElementById('input-quantity')
-                    : btnMinus.parentElement.querySelector('.grainger-qty-input');
-
-                if (input) {
-                    let v = parseInt(input.value) || 1;
-                    if (v > 1) {
-                        input.value = v - 1;
-                    }
-                }
-            }
-        });
 
 
         // ==========================================================================

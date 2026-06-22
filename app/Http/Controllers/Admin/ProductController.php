@@ -88,6 +88,7 @@ class ProductController extends Controller
             'status' => $request->status ?? 'pending',
             'is_featured' => $request->has('is_featured'),
             'is_discounted' => $request->has('is_discounted'),
+            'sort_order' => $request->sort_order ?? 0,
         ]);
 
         // TRANSLATIONS (SAFE)
@@ -192,6 +193,7 @@ class ProductController extends Controller
                 'status' => $request->status ?? 'pending',
                 'is_featured' => $request->has('is_featured'),
                 'is_discounted' => $request->has('is_discounted'),
+                'sort_order' => $request->sort_order ?? 0,
             ]);
 
             // 2. TRANSLATIONS (SAFE REPLACE)
