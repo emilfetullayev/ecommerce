@@ -17,11 +17,6 @@
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 contact-left">
                     <div class="content-details">
-                        <div class="location-info">
-                            <div class="location-title title"><i class="fa fa-home"></i>{{ t('address_title') }}</div>
-                            <div class="content-address">{{ t('address_desc') }} </div>
-                            <a href="https://maps.google.com/maps?q=71%20Pennington%20Lane%20Vernon%20Rockville%2C%20CT%2006066%20&amp;hl=en-gb&amp;t=m&amp;z=15" target="_blank" class="btn btn-info"><i class="fa fa-map-marker"></i> View Google Map</a>
-                        </div>
                         <div class="phone-info">
                             <div class="phone-title title"><i class="fa fa-mobile"></i>{{ t('phone_title') }}</div>
                             <div class="content-number"> 123-456-7890</div>

@@ -15,12 +15,7 @@
                     <div class="position-footer-left">
                         <h5 class="toggled title">{{ t('contact_title') }}</h5>
                         <ul class="list-unstyled">
-                            <li>
-                                <div class="site">
-                                    <div class="contact_title">{{ t('address_title') }}:</div>
-                                    <div class="contact_site">{{ t('address_desc') }}</div>
-                                </div>
-                            </li>
+
                             <li>
                                 <div class="phone">
                                     <div class="contact_title">{{ t('phone_title') }}:</div>
