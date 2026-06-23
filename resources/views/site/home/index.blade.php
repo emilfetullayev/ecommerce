@@ -2,7 +2,6 @@
 
 @section('content')
 
-
     <div id="common-home">
         <div class="slideshow">
             <div class="swiper-viewport">
@@ -52,7 +51,7 @@
                                         </div>
 
                                         <a href="{{ route('web.product.show', $product->id) }}" class="btn-shop-now">
-                                             {{ t('shop_now') }}
+                                            {{ t('shop_now') }}
                                         </a>
                                     </div>
                                 </div>
@@ -109,7 +108,8 @@
 
                                         <div class="ad-image-box">
                                             <a href="{{ route('web.product.show', $data->id) }}">
-                                                <img src="{{ asset('storage/'.$img) }}" class="img-responsive" alt="{{ $name }}">
+                                                <img src="{{ asset('storage/'.$img) }}" class="img-responsive"
+                                                     alt="{{ $name }}">
                                             </a>
 
                                         </div>
@@ -124,27 +124,37 @@
                                                 </h4>
                                                 <div class="grainger-sku">Məhsul kodu {{ $data->code ?? '' }}</div>
                                             </div>
+                                            @if(auth()->guard('company')->check())
 
-                                            <div class="grainger-price-block">
-                                                <span class="price-label">Qiyməti</span>
-                                                <div class="price-row">
-                                                    <span class="price-old"> {{ number_format($price, 2) }}</span>
-                                                    <span class="price-amount">{{ number_format($data->discount_price, 2) }}</span>
+                                                <div class="grainger-price-block">
+                                                    <span class="price-label">Qiyməti</span>
+                                                    <div class="price-row">
+                                                        <span class="price-old"> {{ number_format($price, 2) }}</span>
+                                                        <span
+                                                            class="price-amount">{{ number_format($data->discount_price, 2) }}</span>
+                                                    </div>
                                                 </div>
-                                            </div>
-
+                                            @endif
                                             <div class="grainger-action-block">
                                                 <div class="quantity-wrapper">
                                                     <div class="qty-control-group">
-                                                        <button type="button" class="qty-btn grainger-qty-minus">-</button>
-                                                        <input type="number" value="1" min="1" class="qty-input grainger-qty-input">
-                                                        <button type="button" class="qty-btn grainger-qty-plus">+</button>
+                                                        <button type="button" class="qty-btn grainger-qty-minus">-
+                                                        </button>
+                                                        <input type="number" value="1" min="1"
+                                                               class="qty-input grainger-qty-input">
+                                                        <button type="button" class="qty-btn grainger-qty-plus">+
+                                                        </button>
                                                     </div>
                                                 </div>
                                                 @if(auth()->guard('company')->check())
-                                                    <button type="button" class="btn-cart grainger-btn-cart">Sepete ekle</button>
+                                                    <button type="button" class="btn-cart grainger-btn-cart">Sepete
+                                                        ekle
+                                                    </button>
                                                 @else
-                                                    <button type="button" onclick="window.location.href='{{ route('company.login') }}'" class="btn-login">Sepete ekle</button>
+                                                    <button type="button"
+                                                            onclick="window.location.href='{{ route('company.login') }}'"
+                                                            class="btn-login">Sepete ekle
+                                                    </button>
                                                 @endif
                                             </div>
                                         </div>
@@ -191,9 +201,11 @@
                                         <div class="ad-image-box">
                                             <a href="{{ route('web.product.show', $data->id) }}">
                                                 @if($img)
-                                                    <img src="{{ asset('storage/'.$img) }}" class="img-responsive" alt="{{ $name }}">
+                                                    <img src="{{ asset('storage/'.$img) }}" class="img-responsive"
+                                                         alt="{{ $name }}">
                                                 @else
-                                                    <img src="{{ asset('web/image/no-image.png') }}" class="img-responsive" alt="{{ $name }}">
+                                                    <img src="{{ asset('web/image/no-image.png') }}"
+                                                         class="img-responsive" alt="{{ $name }}">
                                                 @endif
                                             </a>
 
@@ -209,26 +221,33 @@
                                                 </h4>
                                                 <div class="grainger-sku">Məhsul kodu {{ $data->code ?? '' }}</div>
                                             </div>
-
-                                            <div class="grainger-price-block">
-                                                <span class="price-label">Qiyməti</span>
-                                                <div class="price-row">
-                                                    <span class="price-amount">{{ number_format($price, 2) }} ₼</span>
+                                            @if(auth()->guard('company')->check())
+                                                <div class="grainger-price-block">
+                                                    <span class="price-label">Qiyməti</span>
+                                                    <div class="price-row">
+                                                        <span
+                                                            class="price-amount">{{ number_format($price, 2) }} ₼</span>
+                                                    </div>
                                                 </div>
-                                            </div>
-
+                                            @endif
                                             <div class="grainger-action-block">
                                                 <div class="quantity-wrapper">
                                                     <div class="qty-control-group">
-                                                        <button type="button" class="qty-btn grainger-qty-minus">-</button>
-                                                        <input type="number" value="1" min="1" class="qty-input grainger-qty-input">
-                                                        <button type="button" class="qty-btn grainger-qty-plus">+</button>
+                                                        <button type="button" class="qty-btn grainger-qty-minus">-
+                                                        </button>
+                                                        <input type="number" value="1" min="1"
+                                                               class="qty-input grainger-qty-input">
+                                                        <button type="button" class="qty-btn grainger-qty-plus">+
+                                                        </button>
                                                     </div>
                                                 </div>
                                                 @if(auth()->guard('company')->check())
-                                                    <button type="button" class="btn-cart grainger-btn-cart">{{ t('add_to_cart') }}</button>
+                                                    <button type="button"
+                                                            class="btn-cart grainger-btn-cart">{{ t('add_to_cart') }}</button>
                                                 @else
-                                                    <button type="button" onclick="window.location.href='{{ route('company.login') }}'" class="btn-login">{{ t('add_to_cart') }}</button>
+                                                    <button type="button"
+                                                            onclick="window.location.href='{{ route('company.login') }}'"
+                                                            class="btn-login">{{ t('add_to_cart') }}</button>
                                                 @endif
                                             </div>
                                         </div>
@@ -239,7 +258,8 @@
                         </div>
 
                         <div id="product-loader" class="text-center" style="display: none; padding: 30px; width: 100%;">
-                            <p><i class="fa fa-spinner fa-spin" style="font-size:32px; color: #333;"></i>  {{ t('loading_products') }}</p>
+                            <p><i class="fa fa-spinner fa-spin"
+                                  style="font-size:32px; color: #333;"></i> {{ t('loading_products') }}</p>
                         </div>
 
                     </div>
@@ -262,10 +282,10 @@
             prevButton: '.swiper-button-prev',
             watchActiveIndex: true,
             onSlideChangeStart: function (swiper) {
-                $(".slide-progress").css({ width: 0, transition: "width 0s" });
+                $(".slide-progress").css({width: 0, transition: "width 0s"});
             },
             onSlideChangeEnd: function (swiper) {
-                $(".slide-progress").css({ width: "100%", transition: "width 5000ms" });
+                $(".slide-progress").css({width: "100%", transition: "width 5000ms"});
             },
             spaceBetween: 0,
             autoplay: 5000,
@@ -283,13 +303,13 @@
             autoplay: 5000,
             autoplayDisableOnInteraction: true,
             breakpoints: {
-                1440: { slidesPerView: 7, spaceBetween: 0 },
-                1199: { slidesPerView: 6, spaceBetween: 0 },
-                991: { slidesPerView: 5, spaceBetween: 0 },
-                767: { slidesPerView: 4, spaceBetween: 0 },
-                600: { slidesPerView: 3, spaceBetween: 0 },
-                375: { slidesPerView: 2, spaceBetween: 0 },
-                300: { slidesPerView: 1, spaceBetween: 0 }
+                1440: {slidesPerView: 7, spaceBetween: 0},
+                1199: {slidesPerView: 6, spaceBetween: 0},
+                991: {slidesPerView: 5, spaceBetween: 0},
+                767: {slidesPerView: 4, spaceBetween: 0},
+                600: {slidesPerView: 3, spaceBetween: 0},
+                375: {slidesPerView: 2, spaceBetween: 0},
+                300: {slidesPerView: 1, spaceBetween: 0}
             }
         });
 

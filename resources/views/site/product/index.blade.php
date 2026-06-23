@@ -35,14 +35,17 @@
                                         @endphp
 
                                         <div class="col-xs-12 col-sm-6 col-md-3 product-layout">
-                                            <div class="grainger-product-card style-ad-card" data-product-id="{{ $data->id }}">
+                                            <div class="grainger-product-card style-ad-card"
+                                                 data-product-id="{{ $data->id }}">
 
                                                 <div class="ad-image-box">
                                                     <a href="{{ route('web.product.show', $data->id) }}">
                                                         @if($img)
-                                                            <img src="{{ asset('storage/'.$img) }}" class="img-responsive" alt="{{ $name }}">
+                                                            <img src="{{ asset('storage/'.$img) }}"
+                                                                 class="img-responsive" alt="{{ $name }}">
                                                         @else
-                                                            <img src="{{ asset('web/image/no-image.png') }}" class="img-responsive" alt="{{ $name }}">
+                                                            <img src="{{ asset('web/image/no-image.png') }}"
+                                                                 class="img-responsive" alt="{{ $name }}">
                                                         @endif
                                                     </a>
 
@@ -56,28 +59,37 @@
                                                         <h4 class="grainger-title">
                                                             <a href="{{ route('web.product.show', $data->id) }}">{{ $name }}</a>
                                                         </h4>
-                                                        <div class="grainger-sku">Məhsul kodu {{ $data->code ?? '' }}</div>
+                                                        <div class="grainger-sku">Məhsul
+                                                            kodu {{ $data->code ?? '' }}</div>
                                                     </div>
-
-                                                    <div class="grainger-price-block">
-                                                        <span class="price-label">Qiyməti</span>
-                                                        <div class="price-row">
-                                                            <span class="price-amount">{{ number_format($price, 2) }} ₼</span>
+                                                    @if(auth()->guard('company')->check())
+                                                        <div class="grainger-price-block">
+                                                            <span class="price-label">Qiyməti</span>
+                                                            <div class="price-row">
+                                                                <span class="price-amount">{{ number_format($price, 2) }} ₼</span>
+                                                            </div>
                                                         </div>
-                                                    </div>
-
+                                                    @endif
                                                     <div class="grainger-action-block">
                                                         <div class="quantity-wrapper">
                                                             <div class="qty-control-group">
-                                                                <button type="button" class="qty-btn grainger-qty-minus">-</button>
-                                                                <input type="number" value="1" min="1" class="qty-input grainger-qty-input">
-                                                                <button type="button" class="qty-btn grainger-qty-plus">+</button>
+                                                                <button type="button"
+                                                                        class="qty-btn grainger-qty-minus">-
+                                                                </button>
+                                                                <input type="number" value="1" min="1"
+                                                                       class="qty-input grainger-qty-input">
+                                                                <button type="button" class="qty-btn grainger-qty-plus">
+                                                                    +
+                                                                </button>
                                                             </div>
                                                         </div>
                                                         @if(auth()->guard('company')->check())
-                                                            <button type="button" class="btn-cart grainger-btn-cart"> {{ t('add_to_cart') }}</button>
+                                                            <button type="button"
+                                                                    class="btn-cart grainger-btn-cart"> {{ t('add_to_cart') }}</button>
                                                         @else
-                                                            <button type="button" onclick="window.location.href='{{ route('company.login') }}'" class="btn-login">{{ t('add_to_cart') }}</button>
+                                                            <button type="button"
+                                                                    onclick="window.location.href='{{ route('company.login') }}'"
+                                                                    class="btn-login">{{ t('add_to_cart') }}</button>
                                                         @endif
                                                     </div>
                                                 </div>
@@ -87,8 +99,10 @@
                                     @endforeach
                                 </div>
 
-                                <div id="product-loader" class="text-center" style="display: none; padding: 30px; width: 100%;">
-                                    <p><i class="fa fa-spinner fa-spin" style="font-size:32px; color: #333;"></i>  {{ t('loading_products') }}</p>
+                                <div id="product-loader" class="text-center"
+                                     style="display: none; padding: 30px; width: 100%;">
+                                    <p><i class="fa fa-spinner fa-spin"
+                                          style="font-size:32px; color: #333;"></i> {{ t('loading_products') }}</p>
                                 </div>
 
                             </div>

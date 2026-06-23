@@ -137,4 +137,46 @@ class CartController extends Controller
             'cart_items' => $formattedItems
         ]);
     }
+
+
+    public function completeOrder()
+    {
+        $cart = session()->get('cart', []);
+        $totalPrice = 0;
+
+        $whatsAppNumber = "994505914145";
+        $date = date('d.m.y');
+
+        $companyName = "Müştəri";
+
+        if (auth()->guard('company')->check()) {
+            $companyName = auth()->guard('company')->user()->company_name;
+        }
+
+        $message = "{$date}\n";
+        $message .= "Sifariş : {$companyName}\n\n";
+
+        foreach ($cart as $id => $item) {
+            $itemTotal = $item['price'] * $item['quantity'];
+            $totalPrice += $itemTotal;
+
+            $product = Product::find($id);
+            $productCode = $product?->code ?? '';
+
+            $codeText = $productCode ? " ( kod: {$productCode} )" : "";
+
+            $message .= "{$item['name']}{$codeText} {$item['quantity']} ədəd x "
+                . number_format($item['price'], 2) . " ₼\n";
+        }
+
+        $message .= "\nCəm " . number_format($totalPrice, 2) . " ₼";
+
+        session()->forget('cart');
+
+        $encodedMessage = urlencode($message);
+
+        return redirect(
+            "https://api.whatsapp.com/send?phone={$whatsAppNumber}&text={$encodedMessage}"
+        );
+    }
 }
