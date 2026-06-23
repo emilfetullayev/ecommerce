@@ -26,6 +26,9 @@ Route::group(['middleware' => 'guest:web'], function () {
 
 Route::middleware('auth:web')->group(function () {
 
+    Route::get('/contacts', [\App\Http\Controllers\Admin\ContactController::class, 'index'])
+        ->name('contacts.index');
+
     Route::get('/translations', [TranslationController::class, 'index'])
         ->name('admin.translations.index');
 

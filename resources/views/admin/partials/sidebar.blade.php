@@ -85,6 +85,13 @@
                     </a>
                 </li>
 
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{ route('contacts.index') }}">
+                        <i class="ri-message-2-line"></i>
+                        <span data-key="t-layouts">Contacts</span>
+                    </a>
+                </li>
+
 
 
             </ul>

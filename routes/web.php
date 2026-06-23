@@ -37,6 +37,8 @@ Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::get('/cart/complete', [CartController::class, 'completeOrder'])
     ->name('cart.complete');
 
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+
 Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
 Route::get('/language/{locale}', function ($locale) {
     if (in_array($locale, ['az', 'en', 'ru', 'zh'])) {
