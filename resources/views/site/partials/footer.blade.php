@@ -32,11 +32,6 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-sm-2">
-                    <div class="footer-content">
-                        <a href="{{ route('web.contact') }}" class="product-link"> <h5>{{ t('contact_title') }}</h5></a>
-                    </div>
-                </div>
 
 
                 <div class="col-sm-2">
