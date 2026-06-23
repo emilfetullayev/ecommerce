@@ -45,10 +45,11 @@
                                         <h2 class="main-title">
                                             {{ $name }}
                                         </h2>
-
-                                        <div class="slide-price">
-                                            {{ number_format($price, 2) }} ₼
-                                        </div>
+                                        @if(auth()->guard('company')->check())
+                                            <div class="slide-price">
+                                                {{ number_format($price, 2) }} ₼
+                                            </div>
+                                        @endif
 
                                         <a href="{{ route('web.product.show', $product->id) }}" class="btn-shop-now">
                                             {{ t('shop_now') }}
