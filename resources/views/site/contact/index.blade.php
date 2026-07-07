@@ -45,7 +45,7 @@
                                     <i class="fa fa-mobile"></i> {{ t('phone_title') }}
                                 </div>
                                 <div class="content-number">
-                                    123-456-7890
+                                    050 860 88 85
                                 </div>
                             </div>
 
