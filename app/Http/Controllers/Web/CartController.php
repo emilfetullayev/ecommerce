@@ -154,7 +154,9 @@ class CartController extends Controller
         }
 
         $message = "{$date}\n";
-        $message .= "Sifariş : {$companyName}\n\n";
+        $message .= "Sifariş: {$companyName}\n\n";
+
+        $counter = 1;
 
         foreach ($cart as $id => $item) {
             $itemTotal = $item['price'] * $item['quantity'];
@@ -163,13 +165,15 @@ class CartController extends Controller
             $product = Product::find($id);
             $productCode = $product?->code ?? '';
 
-            $codeText = $productCode ? " ( kod: {$productCode} )" : "";
+            $codeText = $productCode ? " (Kod: {$productCode})" : "";
 
-            $message .= "{$item['name']}{$codeText} {$item['quantity']} ədəd x "
-                . number_format($item['price'], 2) . " ₼\n";
+            $message .= "{$counter}. {$item['name']}{$codeText}\n";
+            $message .= "   {$item['quantity']} ədəd × " . number_format($item['price'], 2) . " ₼\n\n";
+
+            $counter++;
         }
 
-        $message .= "\nCəm " . number_format($totalPrice, 2) . " ₼";
+        $message .= "Cəm: " . number_format($totalPrice, 2) . " ₼";
 
         session()->forget('cart');
 
@@ -178,5 +182,4 @@ class CartController extends Controller
         return redirect(
             "https://api.whatsapp.com/send?phone={$whatsAppNumber}&text={$encodedMessage}"
         );
-    }
-}
+    }}

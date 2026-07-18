@@ -119,11 +119,11 @@
 
                 <div id="logo">
                     <a href="{{ route('home') }}">
-                        <img src="{{ asset('web/image/logo.jpeg') }}"
+                        <img src="{{ asset('web/image/logo_web.png') }}"
                              title="Your Store"
                              alt="Your Store"
                              class="img-responsive"
-                             style="max-height: 50px; width: auto;"/>
+                             style="max-height: 52px; width: auto;"/>
                     </a>
                 </div>
 

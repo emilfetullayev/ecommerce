@@ -1192,6 +1192,69 @@ Grainger Style Product Card - TAM VƏ YEKUN RESPONSIVE CSS KODU
 
                         if (data.success) {
 
+
+                            // Header-də ümumi məbləği yenilə
+                            const cartTotalText = document.querySelector('#cart-total .hidden-sm.hidden-xs:last-child');
+                            if (cartTotalText) {
+                                cartTotalText.innerText = '- ' + data.cart_total;
+                            }
+
+// Header dropdown-u yenilə
+                            const headerDropdown = document.querySelector('.header-cart-toggle');
+
+                            if (headerDropdown) {
+
+                                let html = '';
+
+                                if (data.cart_items && data.cart_items.length > 0) {
+
+                                    data.cart_items.forEach(item => {
+
+                                        html += `
+                <li style="display:flex; gap:10px; padding:10px; align-items:center;">
+
+                    <img src="${item.image_url}"
+                         style="width:40px;height:40px;object-fit:cover;">
+
+                    <div>
+                        <div style="font-size:13px;">
+                            ${item.name}
+                        </div>
+
+                        <div style="font-size:12px;color:#888;">
+                            ${item.quantity} x ${item.price}
+                        </div>
+                    </div>
+
+                </li>
+            `;
+
+                                    });
+
+                                    html += `
+            <li style="text-align:center;padding:10px;">
+                <a href="/cart" class="btn btn-warning btn-sm">
+                    Səbətə bax
+                </a>
+            </li>
+        `;
+
+                                } else {
+
+                                    html = `
+            <li>
+                <p class="text-center product-cart-empty">
+                    Səbət boşdur
+                </p>
+            </li>
+        `;
+                                }
+
+                                headerDropdown.innerHTML = html;
+                            }
+
+
+
                             // 1. Header-dəki bütün köhnə səbət sayğaclarını yenilə
                             document.querySelectorAll('.cart-item').forEach(el => {
                                 el.innerText = data.cart_count;
