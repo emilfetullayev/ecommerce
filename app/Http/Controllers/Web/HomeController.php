@@ -15,7 +15,12 @@ class HomeController extends Controller
             'translations' => function ($q) {
                 $q->where('locale', app()->getLocale());
             }
-        ])->where('is_featured', 1)->latest()->get();
+        ])
+            ->where('is_featured', 1)
+            ->orderByRaw('sort_order = 0 ASC')
+            ->orderBy('sort_order')
+            ->orderByDesc('id')
+            ->get();
 
         // Discounted Products
         $discounted = Product::with([
@@ -23,18 +28,24 @@ class HomeController extends Controller
             'translations' => function ($q) {
                 $q->where('locale', app()->getLocale());
             }
-        ])->where('is_discounted', 1)->latest()->get();
+        ])
+            ->where('is_discounted', 1)
+            ->orderByRaw('sort_order = 0 ASC')
+            ->orderBy('sort_order')
+            ->orderByDesc('id')
+            ->get();
 
+        // Products
         $products = Product::with([
             'images',
             'translations' => function ($q) {
                 $q->where('locale', app()->getLocale());
             }
         ])
-            ->orderByRaw('sort_order = 0 ASC, sort_order ASC')
+            ->orderByRaw('sort_order = 0 ASC')
             ->orderBy('sort_order')
+            ->orderByDesc('id')
             ->where('is_discounted', 0)
-            ->latest()
             ->paginate(6);
 
         if ($request->ajax()) {
@@ -46,12 +57,16 @@ class HomeController extends Controller
             foreach ($products as $data) {
 
                 $translation =
-                    $data->translations->where('locale', app()->getLocale())->first()
-                    ?? $data->translations->where('locale', 'az')->first();
+                    $data->translations
+                        ->where('locale', app()->getLocale())
+                        ->first()
+                    ?? $data->translations
+                    ->where('locale', 'az')
+                    ->first();
 
                 $name = $translation->name ?? $data->name;
 
-                // şəkil
+                // Şəkil
                 $img = optional($data->images->first())->image;
 
                 $imgSrc = $img
@@ -76,8 +91,8 @@ class HomeController extends Controller
                     . t('add_to_cart') .
                     '</button>'
                     : '<button type="button"
-                        onclick="window.location.href=\'' . $loginUrl . '\'"
-                        class="btn-login">'
+                    onclick="window.location.href=\'' . $loginUrl . '\'"
+                    class="btn-login">'
                     . t('add_to_cart') .
                     '</button>';
 
@@ -92,16 +107,16 @@ class HomeController extends Controller
                             : $data->retail_price;
 
                     $priceHtml = '
-                    <div class="grainger-price-block">
-                        <span class="price-label">Qiyməti</span>
+                <div class="grainger-price-block">
+                    <span class="price-label">Qiyməti</span>
 
-                        <div class="price-row">
-                            <span class="price-amount">'
+                    <div class="price-row">
+                        <span class="price-amount">'
                         . number_format($price, 2) .
                         ' ₼
-                            </span>
-                        </div>
-                    </div>';
+                        </span>
+                    </div>
+                </div>';
                 }
 
                 $html .= '
@@ -204,7 +219,6 @@ class="qty-btn grainger-qty-plus">
             )
         );
     }
-
     public function show($id)
     {
         $product = Product::with('images',)->findOrFail($id);

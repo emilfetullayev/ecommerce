@@ -2,6 +2,7 @@
 
 @section('content')
 
+    ```
     <div class="container-fluid">
 
         <div class="row">
@@ -135,6 +136,7 @@
                                     </option>
                                 @endforeach
                             </select>
+
                             @error('category_id')
                             <small class="text-danger">{{ $message }}</small>
                             @enderror
@@ -146,26 +148,51 @@
                                 <option value="inactive">Inactive</option>
                             </select>
 
-                                <input type="number" name="sort_order" class="form-control"
-                                       placeholder="Sıra (0, 1, 2...)"
-                                       value="{{ old('sort_order', $product->sort_order ?? 0) }}">
-                                <label>Seçilmiş (önə çıxar)</label>
+                            {{-- SORT ORDER --}}
+                            <input type="number"
+                                   name="sort_order"
+                                   class="form-control"
+                                   placeholder="Sıra (0, 1, 2...)"
+                                   value="{{ old('sort_order', 0) }}"
+                                   min="0">
+
+                            <label class="mt-1">
+                                Seçilmiş (önə çıxar)
+                            </label>
 
 
                             {{-- FEATURED --}}
                             <div class="form-check mb-1">
-                                <input type="checkbox" name="is_featured" value="1" class="form-check-input" id="featured">
-                                <label for="featured">Featured</label>
+                                <input type="checkbox"
+                                       name="is_featured"
+                                       value="1"
+                                       class="form-check-input"
+                                       id="featured">
+
+                                <label for="featured">
+                                    Featured
+                                </label>
                             </div>
 
 
                             <div class="form-check mb-2">
-                                <input type="checkbox" name="is_discounted" value="1" class="form-check-input" id="discounted">
-                                <label for="discounted">Endirimdədir</label>
+                                <input type="checkbox"
+                                       name="is_discounted"
+                                       value="1"
+                                       class="form-check-input"
+                                       id="discounted">
+
+                                <label for="discounted">
+                                    Endirimdədir
+                                </label>
                             </div>
 
                             {{-- IMAGES --}}
-                            <input type="file" name="images[]" class="form-control mb-1" multiple>
+                            <input type="file"
+                                   name="images[]"
+                                   class="form-control mb-1"
+                                   multiple>
+
                             @error('images.*')
                             <small class="text-danger">{{ $message }}</small>
                             @enderror
@@ -182,7 +209,7 @@
 
             </div>
 
-            {{-- RIGHT: LIST (UNCHANGED) --}}
+            {{-- RIGHT: LIST --}}
             <div class="col-lg-8">
 
                 <div class="card">
@@ -198,6 +225,7 @@
                             <thead>
                             <tr>
                                 <th>ID</th>
+                                <th>Sıra</th>
                                 <th>Name</th>
                                 <th>Category</th>
                                 <th>Price</th>
@@ -221,12 +249,51 @@
 
                                     <td>{{ $product->id }}</td>
 
+                                    {{-- SORT ORDER --}}
+                                    <td>
+                                        <div class="d-flex align-items-center gap-1">
+
+                                            <strong>
+                                                {{ $product->sort_order }}
+                                            </strong>
+
+                                            {{-- UP --}}
+                                            <form action="{{ route('products.move-up', $product) }}"
+                                                  method="POST"
+                                                  class="d-inline">
+                                                @csrf
+
+                                                <button type="submit"
+                                                        class="btn btn-outline-secondary btn-sm"
+                                                        title="Yuxarı">
+                                                    ↑
+                                                </button>
+                                            </form>
+
+                                            {{-- DOWN --}}
+                                            <form action="{{ route('products.move-down', $product) }}"
+                                                  method="POST"
+                                                  class="d-inline">
+                                                @csrf
+
+                                                <button type="submit"
+                                                        class="btn btn-outline-secondary btn-sm"
+                                                        title="Aşağı">
+                                                    ↓
+                                                </button>
+                                            </form>
+
+                                        </div>
+                                    </td>
+
                                     <td>
                                         <strong>
                                             {{ $translation->name ?? '' }}
 
                                             @if($product->is_featured)
-                                                <span class="badge bg-warning text-dark">Featured</span>
+                                                <span class="badge bg-warning text-dark">
+                                                Featured
+                                            </span>
                                             @endif
                                         </strong>
                                     </td>
@@ -237,22 +304,31 @@
                                             ?? $product->category?->translations->firstWhere('locale', 'az')?->name }}
                                     </td>
 
-                                    <td>{{ $product->retail_price }} ₼</td>
+                                    <td>
+                                        {{ $product->retail_price }} ₼
+                                    </td>
 
                                     <td>
-                                        <span class="badge bg-info">{{ $product->status }}</span>
+                                    <span class="badge bg-info">
+                                        {{ $product->status }}
+                                    </span>
                                     </td>
 
                                     <td>
                                         <div class="d-flex gap-1">
+
                                             @foreach($product->images->take(3) as $img)
+
                                                 <img src="{{ asset('storage/'.$img->image) }}"
                                                      style="width:35px;height:35px;object-fit:cover;border-radius:6px;">
+
                                             @endforeach
+
                                         </div>
                                     </td>
 
                                     <td>
+
                                         <a href="{{ route('products.edit', $product) }}"
                                            class="btn btn-warning btn-sm">
                                             Edit
@@ -261,13 +337,16 @@
                                         <form action="{{ route('products.destroy', $product) }}"
                                               method="POST"
                                               class="d-inline">
+
                                             @csrf
                                             @method('DELETE')
 
                                             <button class="btn btn-danger btn-sm">
                                                 Delete
                                             </button>
+
                                         </form>
+
                                     </td>
 
                                 </tr>
@@ -287,5 +366,6 @@
         </div>
 
     </div>
+    ```
 
 @endsection

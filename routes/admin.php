@@ -29,6 +29,13 @@ Route::middleware('auth:web')->group(function () {
     Route::get('/contacts', [\App\Http\Controllers\Admin\ContactController::class, 'index'])
         ->name('contacts.index');
 
+    Route::post('/products/{product}/move-up', [ProductController::class, 'moveUp'])
+        ->name('products.move-up');
+
+    Route::post('/products/{product}/move-down', [ProductController::class, 'moveDown'])
+        ->name('products.move-down');
+
+
     Route::get('/translations', [TranslationController::class, 'index'])
         ->name('admin.translations.index');
 

@@ -19,13 +19,57 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::with(['translations'])
-            ->latest()
+            ->orderBy('sort_order')
+            ->orderByDesc('id')
             ->get();
+
         $categories = Category::all();
 
+        return view('admin.products.index', compact('products', 'categories'));
+    }
 
-        return view('admin.products.index', compact('products', 'categories'
-        ));
+    public function moveUp(Product $product)
+    {
+        $previousProduct = Product::query()
+            ->where('sort_order', '<', $product->sort_order)
+            ->orderByDesc('sort_order')
+            ->first();
+
+        if ($previousProduct) {
+            $currentOrder = $product->sort_order;
+
+            $product->update([
+                'sort_order' => $previousProduct->sort_order,
+            ]);
+
+            $previousProduct->update([
+                'sort_order' => $currentOrder,
+            ]);
+        }
+
+        return back()->with('success', 'Məhsul yuxarı keçirildi.');
+    }
+
+    public function moveDown(Product $product)
+    {
+        $nextProduct = Product::query()
+            ->where('sort_order', '>', $product->sort_order)
+            ->orderBy('sort_order')
+            ->first();
+
+        if ($nextProduct) {
+            $currentOrder = $product->sort_order;
+
+            $product->update([
+                'sort_order' => $nextProduct->sort_order,
+            ]);
+
+            $nextProduct->update([
+                'sort_order' => $currentOrder,
+            ]);
+        }
+
+        return back()->with('success', 'Məhsul aşağı keçirildi.');
     }
 
     /**
