@@ -55,6 +55,26 @@ class ProductController extends Controller
 
                 $loginUrl = route('company.login');
 
+                // STOK
+                $stock = (int) $data->stock;
+                $outOfStock = $stock <= 0;
+
+                $cardClass = $outOfStock ? ' card-out-of-stock' : '';
+
+                $overlayHtml = $outOfStock
+                    ? '<div class="oos-overlay">
+                            <span class="oos-overlay-text">
+                                <i class="fa fa-ban"></i> Stokda yoxdur
+                            </span>
+                       </div>'
+                    : '';
+
+                $stockStatusHtml = $outOfStock
+                    ? '<span class="stock-status stock-status--out">
+                            <span class="stock-dot"></span> Stokda yoxdur
+                       </span>'
+                    : '';
+
                 $priceHtml = '';
 
                 if ($isLoggedIn) {
@@ -88,11 +108,49 @@ class ProductController extends Controller
                     . t('add_to_cart') .
                     '</button>';
 
+                // ACTION BLOCK (stoka görə)
+                if ($outOfStock) {
+                    $actionHtml = '
+<button type="button" class="btn-out-of-stock" disabled>
+<i class="fa fa-ban"></i> Stokda yoxdur
+</button>';
+                } else {
+                    $actionHtml = '
+<div class="quantity-wrapper">
+
+<div class="qty-control-group">
+
+<button
+type="button"
+class="qty-btn grainger-qty-minus">
+-
+</button>
+
+<input
+type="number"
+value="1"
+min="1"
+max="' . $stock . '"
+class="qty-input grainger-qty-input">
+
+<button
+type="button"
+class="qty-btn grainger-qty-plus">
++
+</button>
+
+</div>
+
+</div>
+
+' . $cartButton;
+                }
+
                 $html .= '
 
 <div class="col-xs-12 col-sm-6 col-md-3 product-layout">
 
-<div class="grainger-product-card style-ad-card"
+<div class="grainger-product-card style-ad-card' . $cardClass . '"
 data-product-id="' . $data->id . '">
 
 <div class="ad-image-box">
@@ -105,6 +163,8 @@ class="img-responsive"
 alt="' . e($name) . '">
 
 </a>
+
+' . $overlayHtml . '
 
 <div class="ad-heart-badge">
 <i class="fa fa-heart-o"></i>
@@ -132,39 +192,15 @@ alt="' . e($name) . '">
 Məhsul kodu ' . e($productCode) . '
 </div>
 
+' . $stockStatusHtml . '
+
 </div>
 
 ' . $priceHtml . '
 
 <div class="grainger-action-block">
 
-<div class="quantity-wrapper">
-
-<div class="qty-control-group">
-
-<button
-type="button"
-class="qty-btn grainger-qty-minus">
--
-</button>
-
-<input
-type="number"
-value="1"
-min="1"
-class="qty-input grainger-qty-input">
-
-<button
-type="button"
-class="qty-btn grainger-qty-plus">
-+
-</button>
-
-</div>
-
-</div>
-
-' . $cartButton . '
+' . $actionHtml . '
 
 </div>
 
@@ -238,6 +274,26 @@ class="qty-btn grainger-qty-plus">
 
                 $loginUrl = route('company.login');
 
+                // STOK
+                $stock = (int) $data->stock;
+                $outOfStock = $stock <= 0;
+
+                $cardClass = $outOfStock ? ' card-out-of-stock' : '';
+
+                $overlayHtml = $outOfStock
+                    ? '<div class="oos-overlay">
+                            <span class="oos-overlay-text">
+                                <i class="fa fa-ban"></i> Stokda yoxdur
+                            </span>
+                       </div>'
+                    : '';
+
+                $stockStatusHtml = $outOfStock
+                    ? '<span class="stock-status stock-status--out">
+                            <span class="stock-dot"></span> Stokda yoxdur
+                       </span>'
+                    : '';
+
                 // PRICE
                 $priceHtml = '';
 
@@ -270,11 +326,45 @@ class="qty-btn grainger-qty-plus">
                     . t('add_to_cart') .
                     '</button>';
 
+                // ACTION BLOCK (stoka görə)
+                if ($outOfStock) {
+                    $actionHtml = '
+<button type="button" class="btn-out-of-stock" disabled>
+<i class="fa fa-ban"></i> Stokda yoxdur
+</button>';
+                } else {
+                    $actionHtml = '
+<div class="quantity-wrapper">
+
+<div class="qty-control-group">
+
+<button type="button" class="qty-btn grainger-qty-minus">
+-
+</button>
+
+<input
+type="number"
+value="1"
+min="1"
+max="' . $stock . '"
+class="qty-input grainger-qty-input">
+
+<button type="button" class="qty-btn grainger-qty-plus">
++
+</button>
+
+</div>
+
+</div>
+
+' . $cartButton;
+                }
+
                 $html .= '
 
 <div class="col-xs-12 col-sm-6 col-md-3 product-layout">
 
-<div class="grainger-product-card style-ad-card"
+<div class="grainger-product-card style-ad-card' . $cardClass . '"
 data-product-id="' . $data->id . '">
 
 <div class="ad-image-box">
@@ -287,6 +377,8 @@ class="img-responsive"
 alt="' . e($name) . '">
 
 </a>
+
+' . $overlayHtml . '
 
 <div class="ad-heart-badge">
 <i class="fa fa-heart-o"></i>
@@ -314,35 +406,15 @@ alt="' . e($name) . '">
 Məhsul kodu ' . e($productCode) . '
 </div>
 
+' . $stockStatusHtml . '
+
 </div>
 
 ' . $priceHtml . '
 
 <div class="grainger-action-block">
 
-<div class="quantity-wrapper">
-
-<div class="qty-control-group">
-
-<button type="button" class="qty-btn grainger-qty-minus">
--
-</button>
-
-<input
-type="number"
-value="1"
-min="1"
-class="qty-input grainger-qty-input">
-
-<button type="button" class="qty-btn grainger-qty-plus">
-+
-</button>
-
-</div>
-
-</div>
-
-' . $cartButton . '
+' . $actionHtml . '
 
 </div>
 

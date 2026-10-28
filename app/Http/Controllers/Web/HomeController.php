@@ -64,7 +64,7 @@ class HomeController extends Controller
                     ->where('locale', 'az')
                     ->first();
 
-                $name = $translation->name ?? $data->name;
+                $name = e($translation->name ?? $data->name);
 
                 // Şəkil
                 $img = optional($data->images->first())->image;
@@ -79,11 +79,31 @@ class HomeController extends Controller
                     ?? $data->category?->translations
                     ->firstWhere('locale', 'az')?->name;
 
-                $productCode = $data->code ?? '';
+                $productCode = e($data->code ?? '');
 
                 $productUrl = route('web.product.show', $data->id);
 
                 $loginUrl = route('company.login');
+
+                // STOK
+                $stock = (int) $data->stock;
+                $outOfStock = $stock <= 0;
+
+                $cardClass = $outOfStock ? ' card-out-of-stock' : '';
+
+                $overlayHtml = $outOfStock
+                    ? '<div class="oos-overlay">
+                            <span class="oos-overlay-text">
+                                <i class="fa fa-ban"></i> Stokda yoxdur
+                            </span>
+                       </div>'
+                    : '';
+
+                $stockStatusHtml = $outOfStock
+                    ? '<span class="stock-status stock-status--out">
+                            <span class="stock-dot"></span> Stokda yoxdur
+                       </span>'
+                    : '';
 
                 // CART BUTTON
                 $cartButton = $isLoggedIn
@@ -95,6 +115,43 @@ class HomeController extends Controller
                     class="btn-login">'
                     . t('add_to_cart') .
                     '</button>';
+
+                // ACTION BLOCK (stoka görə)
+                if ($outOfStock) {
+                    $actionHtml = '
+<button type="button" class="btn-out-of-stock" disabled>
+<i class="fa fa-ban"></i> Stokda yoxdur
+</button>';
+                } else {
+                    $actionHtml = '
+<div class="quantity-wrapper">
+
+<div class="qty-control-group">
+
+<button type="button"
+class="qty-btn grainger-qty-minus">
+-
+</button>
+
+<input
+type="number"
+value="1"
+min="1"
+max="' . $stock . '"
+class="qty-input grainger-qty-input">
+
+<button
+type="button"
+class="qty-btn grainger-qty-plus">
++
+</button>
+
+</div>
+
+</div>
+
+' . $cartButton;
+                }
 
                 // PRICE
                 $priceHtml = '';
@@ -123,7 +180,7 @@ class HomeController extends Controller
 
 <div class="col-xs-12 col-sm-6 col-md-3 product-layout">
 
-<div class="grainger-product-card style-ad-card"
+<div class="grainger-product-card style-ad-card' . $cardClass . '"
      data-product-id="' . $data->id . '">
 
 <div class="ad-image-box">
@@ -136,6 +193,8 @@ class HomeController extends Controller
 
 </a>
 
+' . $overlayHtml . '
+
 <div class="ad-heart-badge">
 <i class="fa fa-heart-o"></i>
 </div>
@@ -147,7 +206,7 @@ class HomeController extends Controller
 <div class="grainger-top-meta">
 
 <span class="grainger-brand">
-' . $categoryName . '
+' . e($categoryName) . '
 </span>
 
 <h4 class="grainger-title">
@@ -162,38 +221,15 @@ class HomeController extends Controller
 Məhsul kodu ' . $productCode . '
 </div>
 
+' . $stockStatusHtml . '
+
 </div>
 
 ' . $priceHtml . '
 
 <div class="grainger-action-block">
 
-<div class="quantity-wrapper">
-
-<div class="qty-control-group">
-
-<button type="button"
-class="qty-btn grainger-qty-minus">
--
-</button>
-
-<input
-type="number"
-value="1"
-min="1"
-class="qty-input grainger-qty-input">
-
-<button
-type="button"
-class="qty-btn grainger-qty-plus">
-+
-</button>
-
-</div>
-
-</div>
-
-' . $cartButton . '
+' . $actionHtml . '
 
 </div>
 
