@@ -110,6 +110,30 @@
             .btn-search-submit-flex {
                 padding: 0 15px !important; /* Düymə sıxılsın */
             }
+
+            /* 🛒 Səbət dropdown-u mobildə ekrandan sola çıxmasın */
+            .header_cart,
+            #cart {
+                position: relative;
+            }
+
+            #cart .dropdown-menu.header-cart-toggle {
+                left: 50% !important;
+                right: auto !important;
+                transform: translateX(-50%);
+                width: 300px;
+                min-width: 0;
+                max-width: calc(100vw - 30px);
+                max-height: 70vh;
+                overflow-y: auto;
+                margin-top: 8px;
+                text-align: left;
+            }
+
+            #cart .dropdown-menu.header-cart-toggle .btn {
+                display: block;
+                width: 100%;
+            }
         }
     </style>
 
@@ -180,7 +204,7 @@
 
                             {{-- BUTTON --}}
                             <button type="submit" class="btn-search-submit-flex">
-                                  {{ t('search_title') }}
+                                {{ t('search_title') }}
                             </button>
 
                         </div>
@@ -303,7 +327,7 @@
 
                         <li class="menulist home">
                             <a id="home" href="{{ route('home') }}">
-                                  {{ t('home_menu_title') }}
+                                {{ t('home_menu_title') }}
                             </a>
                         </li>
                         @php
@@ -402,7 +426,7 @@
                         @endforeach
                         <li class="blog">
                             <a href="{{ route('web.contact') }}">
-                                   {{ t('contact_menu_title') }}
+                                {{ t('contact_menu_title') }}
                             </a>
                         </li>
 

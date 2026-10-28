@@ -1,7 +1,92 @@
 @extends('site.layouts.app')
 
 @section('content')
+    {{-- ================= STOK BİTİB STİLLƏRİ =================
+         Bu <style> blokunu səhifədə bir dəfə qoyun
+         (məs: @section('content') daxilində, ən sonda) --}}
+    <style>
+        /* Şəkil bloku */
+        .grainger-product-card .ad-image-box {
+            position: relative;
+            overflow: hidden;
+        }
 
+        /* Bitmiş məhsulun şəkli boz və solğun */
+        .card-out-of-stock .ad-image-box img {
+            filter: grayscale(100%);
+            opacity: .5;
+            transition: .3s;
+        }
+        .card-out-of-stock:hover .ad-image-box img {
+            opacity: .65;
+        }
+
+        /* Mərkəzdə tünd zolaq */
+        .oos-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .oos-overlay-text {
+            background: rgba(33, 37, 41, .85);
+            color: #fff;
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: .3px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, .25);
+        }
+
+
+        /* Stok statusu (kodun altında) */
+        .stock-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+        .stock-status .stock-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .stock-status--in {
+            color: #2e7d32;
+            background: #e8f5e9;
+        }
+        .stock-status--in .stock-dot {
+            background: #43a047;
+        }
+        .stock-status--out {
+            color: #c62828;
+            background: #ffebee;
+        }
+        .stock-status--out .stock-dot {
+            background: #e53935;
+        }
+
+        /* Səbət düyməsinin yerinə */
+        .btn-out-of-stock {
+            width: 100%;
+            padding: 10px;
+            background: #f1f1f1;
+            color: #9e9e9e;
+            border: 1px dashed #cfcfcf;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: not-allowed;
+        }
+    </style>
     <div id="common-home">
         <div class="slideshow">
             <div class="swiper-viewport">
@@ -98,10 +183,12 @@
                                     }
 
                                     $img = optional($data->images->first())->image;
+
+                                    $outOfStock = (int) $data->stock <= 0;
                                 @endphp
 
                                 <div class="col-xs-12 col-sm-6 col-md-3 product-layout">
-                                    <div class="grainger-product-card style-ad-card"
+                                    <div class="grainger-product-card style-ad-card {{ $outOfStock ? 'card-out-of-stock' : '' }}"
                                          data-product-id="{{ $data->id }}"
                                          data-name="{{ $name }}"
                                          data-price="{{ number_format($data->discount_price, 2) }}"
@@ -113,6 +200,13 @@
                                                      alt="{{ $name }}">
                                             </a>
 
+                                            @if($outOfStock)
+                                                <div class="oos-overlay">
+                                                    <span class="oos-overlay-text">
+                                                        <i class="fa fa-ban"></i> Stokda yoxdur
+                                                    </span>
+                                                </div>
+                                            @endif
                                         </div>
 
                                         <div class="grainger-info-wrapper">
@@ -124,6 +218,12 @@
                                                     <a href="{{ route('web.product.show', $data->id) }}">{{ $name }}</a>
                                                 </h4>
                                                 <div class="grainger-sku">Məhsul kodu {{ $data->code ?? '' }}</div>
+
+                                                @if($outOfStock)
+                                                    <span class="stock-status stock-status--out">
+                                                        <span class="stock-dot"></span> Stokda yoxdur
+                                                    </span>
+                                                @endif
                                             </div>
                                             @if(auth()->guard('company')->check())
 
@@ -132,30 +232,36 @@
                                                     <div class="price-row">
                                                         <span class="price-old"> {{ number_format($price, 2) }}</span>
                                                         <span
-                                                            class="price-amount">{{ number_format($data->discount_price, 2) }}</span>
+                                                                class="price-amount">{{ number_format($data->discount_price, 2) }}</span>
                                                     </div>
                                                 </div>
                                             @endif
                                             <div class="grainger-action-block">
-                                                <div class="quantity-wrapper">
-                                                    <div class="qty-control-group">
-                                                        <button type="button" class="qty-btn grainger-qty-minus">-
-                                                        </button>
-                                                        <input type="number" value="1" min="1"
-                                                               class="qty-input grainger-qty-input">
-                                                        <button type="button" class="qty-btn grainger-qty-plus">+
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                @if(auth()->guard('company')->check())
-                                                    <button type="button" class="btn-cart grainger-btn-cart">Sepete
-                                                        ekle
+                                                @if($outOfStock)
+                                                    <button type="button" class="btn-out-of-stock" disabled>
+                                                        <i class="fa fa-ban"></i> Stokda yoxdur
                                                     </button>
                                                 @else
-                                                    <button type="button"
-                                                            onclick="window.location.href='{{ route('company.login') }}'"
-                                                            class="btn-login">Sepete ekle
-                                                    </button>
+                                                    <div class="quantity-wrapper">
+                                                        <div class="qty-control-group">
+                                                            <button type="button" class="qty-btn grainger-qty-minus">-
+                                                            </button>
+                                                            <input type="number" value="1" min="1" max="{{ $data->stock }}"
+                                                                   class="qty-input grainger-qty-input">
+                                                            <button type="button" class="qty-btn grainger-qty-plus">+
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    @if(auth()->guard('company')->check())
+                                                        <button type="button" class="btn-cart grainger-btn-cart">Sepete
+                                                            ekle
+                                                        </button>
+                                                    @else
+                                                        <button type="button"
+                                                                onclick="window.location.href='{{ route('company.login') }}'"
+                                                                class="btn-login">Sepete ekle
+                                                        </button>
+                                                    @endif
                                                 @endif
                                             </div>
                                         </div>
@@ -194,10 +300,13 @@
                                     }
 
                                     $img = optional($data->images->first())->image;
+
+                                    $outOfStock = (int) $data->stock <= 0;
                                 @endphp
 
                                 <div class="col-xs-12 col-sm-6 col-md-3 product-layout">
-                                    <div class="grainger-product-card style-ad-card" data-product-id="{{ $data->id }}">
+                                    <div class="grainger-product-card style-ad-card {{ $outOfStock ? 'card-out-of-stock' : '' }}"
+                                         data-product-id="{{ $data->id }}">
 
                                         <div class="ad-image-box">
                                             <a href="{{ route('web.product.show', $data->id) }}">
@@ -210,6 +319,13 @@
                                                 @endif
                                             </a>
 
+                                            @if($outOfStock)
+                                                <div class="oos-overlay">
+                                                    <span class="oos-overlay-text">
+                                                        <i class="fa fa-ban"></i> Stokda yoxdur
+                                                    </span>
+                                                </div>
+                                            @endif
                                         </div>
 
                                         <div class="grainger-info-wrapper">
@@ -221,34 +337,46 @@
                                                     <a href="{{ route('web.product.show', $data->id) }}">{{ $name }}</a>
                                                 </h4>
                                                 <div class="grainger-sku">Məhsul kodu {{ $data->code ?? '' }}</div>
+
+                                                @if($outOfStock)
+                                                    <span class="stock-status stock-status--out">
+                                                        <span class="stock-dot"></span> Stokda yoxdur
+                                                    </span>
+                                                @endif
                                             </div>
                                             @if(auth()->guard('company')->check())
                                                 <div class="grainger-price-block">
                                                     <span class="price-label">Qiyməti</span>
                                                     <div class="price-row">
                                                         <span
-                                                            class="price-amount">{{ number_format($price, 2) }} ₼</span>
+                                                                class="price-amount">{{ number_format($price, 2) }} ₼</span>
                                                     </div>
                                                 </div>
                                             @endif
                                             <div class="grainger-action-block">
-                                                <div class="quantity-wrapper">
-                                                    <div class="qty-control-group">
-                                                        <button type="button" class="qty-btn grainger-qty-minus">-
-                                                        </button>
-                                                        <input type="number" value="1" min="1"
-                                                               class="qty-input grainger-qty-input">
-                                                        <button type="button" class="qty-btn grainger-qty-plus">+
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                @if(auth()->guard('company')->check())
-                                                    <button type="button"
-                                                            class="btn-cart grainger-btn-cart">{{ t('add_to_cart') }}</button>
+                                                @if($outOfStock)
+                                                    <button type="button" class="btn-out-of-stock" disabled>
+                                                        <i class="fa fa-ban"></i> Stokda yoxdur
+                                                    </button>
                                                 @else
-                                                    <button type="button"
-                                                            onclick="window.location.href='{{ route('company.login') }}'"
-                                                            class="btn-login">{{ t('add_to_cart') }}</button>
+                                                    <div class="quantity-wrapper">
+                                                        <div class="qty-control-group">
+                                                            <button type="button" class="qty-btn grainger-qty-minus">-
+                                                            </button>
+                                                            <input type="number" value="1" min="1" max="{{ $data->stock }}"
+                                                                   class="qty-input grainger-qty-input">
+                                                            <button type="button" class="qty-btn grainger-qty-plus">+
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    @if(auth()->guard('company')->check())
+                                                        <button type="button"
+                                                                class="btn-cart grainger-btn-cart">{{ t('add_to_cart') }}</button>
+                                                    @else
+                                                        <button type="button"
+                                                                onclick="window.location.href='{{ route('company.login') }}'"
+                                                                class="btn-login">{{ t('add_to_cart') }}</button>
+                                                    @endif
                                                 @endif
                                             </div>
                                         </div>
@@ -257,7 +385,6 @@
                                 </div>
                             @endforeach
                         </div>
-
                         <div id="product-loader" class="text-center" style="display: none; padding: 30px; width: 100%;">
                             <p><i class="fa fa-spinner fa-spin"
                                   style="font-size:32px; color: #333;"></i> {{ t('loading_products') }}</p>

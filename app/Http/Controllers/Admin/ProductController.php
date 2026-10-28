@@ -98,7 +98,7 @@ class ProductController extends Controller
             'code' => 'required|max:100',
             'is_featured' => 'nullable',
             'is_discounted' => 'nullable',
-
+            'stock' => 'required|integer|min:0',
             'images.*' => [
                 'nullable',
                 'image',
@@ -120,6 +120,9 @@ class ProductController extends Controller
             'code.required' => 'Məhsul kodu mütləqdir.',
             'wholesale_price.required' => 'Topdansatış qiymət mütləqdir.',
             'retail_price.required' => 'Perakende qiyməti mütləqdir.',
+            'stock.required' => 'Stok sayı mütləqdir.',
+            'stock.integer'  => 'Stok sayı tam rəqəm olmalıdır.',
+            'stock.min'      => 'Stok sayı mənfi ola bilməz.',
         ]);
 
         // PRODUCT
@@ -133,6 +136,7 @@ class ProductController extends Controller
             'is_featured' => $request->has('is_featured'),
             'is_discounted' => $request->has('is_discounted'),
             'sort_order' => $request->sort_order ?? 0,
+            'stock' => $validated['stock'],
         ]);
 
         // TRANSLATIONS (SAFE)
@@ -203,6 +207,8 @@ class ProductController extends Controller
                 'code' => 'required|max:100',
                 'is_featured' => 'nullable',
                 'is_discounted' => 'nullable',
+                'stock' => 'required|integer|min:0',
+
 
                 'images.*' => [
                     'nullable',
@@ -225,6 +231,9 @@ class ProductController extends Controller
                 'code.required' => 'Məhsul kodu mütləqdir.',
                 'wholesale_price.required' => 'Topdansatış qiymət mütləqdir.',
                 'retail_price.required' => 'Perakende qiyməti mütləqdir.',
+                'stock.required' => 'Stok sayı mütləqdir.',
+                'stock.integer'  => 'Stok sayı tam rəqəm olmalıdır.',
+                'stock.min'      => 'Stok sayı mənfi ola bilməz.',
             ]);
 
             // 1. PRODUCT UPDATE
@@ -238,6 +247,8 @@ class ProductController extends Controller
                 'is_featured' => $request->has('is_featured'),
                 'is_discounted' => $request->has('is_discounted'),
                 'sort_order' => $request->sort_order ?? 0,
+                'stock' => $validated['stock'],
+
             ]);
 
             // 2. TRANSLATIONS (SAFE REPLACE)

@@ -3,7 +3,77 @@
 
 @section('content')
     {{-- Yalnız yazıların sağdakı boşluğu doldurması üçün tənzimlənmiş CSS --}}
+    {{-- STOK BİTİB STİLLƏRİ (bu səhifə üçün) --}}
+    <style>
+        .grainger-product-card .ad-image-box {
+            position: relative;
+            overflow: hidden;
+        }
 
+        .card-out-of-stock .ad-image-box img {
+            filter: grayscale(100%);
+            opacity: .5;
+            transition: .3s;
+        }
+        .card-out-of-stock:hover .ad-image-box img {
+            opacity: .65;
+        }
+
+        .oos-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .oos-overlay-text {
+            background: rgba(33, 37, 41, .85);
+            color: #fff;
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: .3px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, .25);
+        }
+
+        .stock-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+        .stock-status .stock-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .stock-status--out {
+            color: #c62828;
+            background: #ffebee;
+        }
+        .stock-status--out .stock-dot {
+            background: #e53935;
+        }
+
+        .btn-out-of-stock {
+            width: 100%;
+            padding: 10px;
+            background: #f1f1f1;
+            color: #9e9e9e;
+            border: 1px dashed #cfcfcf;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: not-allowed;
+        }
+    </style>
     <div id="product-page" class="container" style="margin-top: 40px;">
         @include('site.partials.breadcrumb')
         <div class="row">
@@ -125,39 +195,103 @@
                         </ul>
                         <hr>
 
-                        <div id="product" class="product-options">
-                            <div class="form-group">
-                                <div class="product-btn-quantity">
-                                    <label class="control-label qty" for="input-quantity">{{ t('count') }}</label>
+                            @php
+                                $outOfStock = (int) $product->stock <= 0;
+                            @endphp
 
-                                    <div class="minus-plus">
-                                        <button type="button" class="minus detal-qty-minus"><i class="fa fa-minus"></i>
-                                        </button>
-                                        <input type="text" name="quantity" value="1" size="2" id="input-quantity"
-                                               class="form-control"/>
-                                        <button type="button" class="plus detal-qty-plus"><i class="fa fa-plus"></i>
-                                        </button>
+                            <div id="product" class="product-options">
+                                <div class="form-group">
+                                    <div class="product-btn-quantity">
+
+                                        @if($outOfStock)
+                                            <div class="detail-oos-box">
+                                                <i class="fa fa-ban detail-oos-icon"></i>
+                                                <div>
+                                                    <div class="detail-oos-title">Stokda yoxdur</div>
+                                                    <div class="detail-oos-text">Bu məhsul hazırda stokda yoxdur</div>
+                                                </div>
+                                            </div>
+                                        @else
+                                            <label class="control-label qty" for="input-quantity">{{ t('count') }}</label>
+
+                                            <div class="minus-plus">
+                                                <button type="button" class="minus detal-qty-minus"><i class="fa fa-minus"></i>
+                                                </button>
+                                                <input type="text" name="quantity" value="1" size="2" id="input-quantity"
+                                                       data-max="{{ $product->stock }}"
+                                                       class="form-control"/>
+                                                <button type="button" class="plus detal-qty-plus"><i class="fa fa-plus"></i>
+                                                </button>
+                                            </div>
+
+                                            @if(auth()->guard('company')->check())
+                                                <button type="button" id="button-cart" data-loading-text="Loading..."
+                                                        class="btn btn-primary btn-lg btn-block">
+                                                    <i class="icon-bag"></i><span>{{ t('add_to_cart') }}</span>
+                                                </button>
+                                            @else
+                                                <button type="button" id="fake-button-cart"
+                                                        onclick="window.location.href='{{ route('company.login') }}'"
+                                                        data-loading-text="Loading..." class="btn btn-primary btn-lg btn-block">
+                                                    <i class="icon-bag"></i><span>{{ t('add_to_cart') }}</span>
+                                                </button>
+                                            @endif
+                                        @endif
+
+                                        <input type="hidden" name="product_id" id="main-product-id"
+                                               value="{{ $product->id }}"/>
                                     </div>
-
-                                    @if(auth()->guard('company')->check())
-                                        <button type="button" id="button-cart" data-loading-text="Loading..."
-                                                class="btn btn-primary btn-lg btn-block">
-                                            <i class="icon-bag"></i><span>{{ t('add_to_cart') }}</span>
-                                        </button>
-                                    @else
-                                        <button type="button" id="fake-button-cart"
-                                                onclick="window.location.href='{{ route('company.login') }}'"
-                                                data-loading-text="Loading..." class="btn btn-primary btn-lg btn-block">
-                                            <i class="icon-bag"></i><span>{{ t('add_to_cart') }}</span>
-                                        </button>
-                                    @endif
-
-                                    <input type="hidden" name="product_id" id="main-product-id"
-                                           value="{{ $product->id }}"/>
                                 </div>
                             </div>
-                        </div>
-                        <hr>
+
+                            <style>
+                                .detail-oos-box {
+                                    flex: 1 1 100%;
+                                    width: 100%;
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 14px;
+                                    padding: 16px 20px;
+                                    background: #fff5f5;
+                                    border: 1px solid #f5c2c7;
+                                    border-left: 4px solid #e53935;
+                                    border-radius: 6px;
+                                }
+                                .detail-oos-icon {
+                                    font-size: 26px;
+                                    color: #e53935;
+                                }
+                                .detail-oos-title {
+                                    font-size: 16px;
+                                    font-weight: 700;
+                                    color: #c62828;
+                                    line-height: 1.3;
+                                }
+                                .detail-oos-text {
+                                    font-size: 13px;
+                                    color: #8a6d6d;
+                                    margin-top: 2px;
+                                }
+                            </style>
+
+                            <script>
+                                $(document).on('click', '.detal-qty-plus', function () {
+                                    let input = $('#input-quantity');
+                                    let current = parseInt(input.val()) || 1;
+                                    let max = parseInt(input.data('max')) || Infinity;
+                                    if (current < max) input.val(current + 1);
+                                });
+
+                                $(document).on('click', '.detal-qty-minus', function () {
+                                    let input = $('#input-quantity');
+                                    let current = parseInt(input.val()) || 1;
+                                    if (current > 1) input.val(current - 1);
+                                });
+
+                                $(document).on('change keyup', '#input-quantity', function () {
+                                    let max = parseInt($(this).data('max')) || Infinity;
+                                    let val = parseInt($(this).val()) || 1;
+                                    if (val > max)                        <hr>
 
                         <div class="addthis_toolbox addthis_default_style"
                              data-url="index6320.html?route=product/product&amp;product_id=28">
@@ -210,10 +344,12 @@
                                             }
 
                                             $img = optional($data->images->first())->image;
+
+                                            $outOfStock = (int) $data->stock <= 0;
                                         @endphp
 
                                         <div class="col-xs-12 col-sm-6 col-md-3 product-layout">
-                                            <div class="grainger-product-card style-ad-card"
+                                            <div class="grainger-product-card style-ad-card {{ $outOfStock ? 'card-out-of-stock' : '' }}"
                                                  data-product-id="{{ $data->id }}">
 
                                                 <div class="ad-image-box">
@@ -227,6 +363,13 @@
                                                         @endif
                                                     </a>
 
+                                                    @if($outOfStock)
+                                                        <div class="oos-overlay">
+                                                            <span class="oos-overlay-text">
+                                                                <i class="fa fa-ban"></i> Stokda yoxdur
+                                                            </span>
+                                                        </div>
+                                                    @endif
                                                 </div>
 
                                                 <div class="grainger-info-wrapper">
@@ -238,7 +381,13 @@
                                                             <a href="{{ route('web.product.show', $data->id) }}">{{ $name }}</a>
                                                         </h4>
                                                         <div
-                                                            class="grainger-sku">{{ t('product_code') }} {{ $data->code ?? '' }}</div>
+                                                                class="grainger-sku">{{ t('product_code') }} {{ $data->code ?? '' }}</div>
+
+                                                        @if($outOfStock)
+                                                            <span class="stock-status stock-status--out">
+                                                                <span class="stock-dot"></span> Stokda yoxdur
+                                                            </span>
+                                                        @endif
                                                     </div>
                                                     @if(auth()->guard('company')->check())
 
@@ -246,30 +395,36 @@
                                                             <span class="price-label"> {{ t('product_price') }}</span>
                                                             <div class="price-row">
                                                             <span
-                                                                class="price-amount">{{ number_format($price, 2) }} ₼</span>
+                                                                    class="price-amount">{{ number_format($price, 2) }} ₼</span>
                                                             </div>
                                                         </div>
                                                     @endif
                                                     <div class="grainger-action-block">
-                                                        <div class="quantity-wrapper">
-                                                            <div class="qty-control-group">
-                                                                <button type="button"
-                                                                        class="qty-btn grainger-qty-minus">-
-                                                                </button>
-                                                                <input type="number" value="1" min="1"
-                                                                       class="qty-input grainger-qty-input">
-                                                                <button type="button" class="qty-btn grainger-qty-plus">
-                                                                    +
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                        @if(auth()->guard('company')->check())
-                                                            <button type="button"
-                                                                    class="btn-cart grainger-btn-cart">{{ t('add_to_cart') }}</button>
+                                                        @if($outOfStock)
+                                                            <button type="button" class="btn-out-of-stock" disabled>
+                                                                <i class="fa fa-ban"></i> Stokda yoxdur
+                                                            </button>
                                                         @else
-                                                            <button type="button"
-                                                                    onclick="window.location.href='{{ route('company.login') }}'"
-                                                                    class="btn-login">{{ t('add_to_cart') }}</button>
+                                                            <div class="quantity-wrapper">
+                                                                <div class="qty-control-group">
+                                                                    <button type="button"
+                                                                            class="qty-btn grainger-qty-minus">-
+                                                                    </button>
+                                                                    <input type="number" value="1" min="1" max="{{ $data->stock }}"
+                                                                           class="qty-input grainger-qty-input">
+                                                                    <button type="button" class="qty-btn grainger-qty-plus">
+                                                                        +
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            @if(auth()->guard('company')->check())
+                                                                <button type="button"
+                                                                        class="btn-cart grainger-btn-cart">{{ t('add_to_cart') }}</button>
+                                                            @else
+                                                                <button type="button"
+                                                                        onclick="window.location.href='{{ route('company.login') }}'"
+                                                                        class="btn-login">{{ t('add_to_cart') }}</button>
+                                                            @endif
                                                         @endif
                                                     </div>
                                                 </div>
@@ -289,6 +444,7 @@
                         </div>
                     </div>
                 </div>
+
 
             </div>
         </div>

@@ -26,5 +26,10 @@ class Product extends Model
     }
 
 
+    public function getIsOutOfStockAttribute(): bool
+    {
+        return (int) $this->stock <= 0;
+    }
+
 }
 

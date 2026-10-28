@@ -134,13 +134,34 @@
                             <small class="text-danger">{{ $message }}</small>
                             @enderror
 
+                            <!-- STOCK -->
+                            <label class="form-label mb-1 mt-1">
+                                Stok sayı
+                                @if((int) $product->stock <= 0)
+                                    <span class="badge bg-danger">Stokda bitib</span>
+                                @else
+                                    <span class="badge bg-success">{{ $product->stock }} əd.</span>
+                                @endif
+                            </label>
+                            <input type="number"
+                                   name="stock"
+                                   min="0"
+                                   step="1"
+                                   class="form-control mb-1 @error('stock') is-invalid @enderror"
+                                   value="{{ old('stock', $product->stock) }}"
+                                   placeholder="Stok sayı (0 = stokda yoxdur)">
+
+                            @error('stock')
+                            <small class="text-danger">{{ $message }}</small>
+                            @enderror
+
                             <!-- CATEGORY -->
                             <select name="category_id"
                                     class="form-select mb-1 @error('category_id') is-invalid @enderror">
 
                                 @foreach($categories as $cat)
                                     <option value="{{ $cat->id }}"
-                                        @selected($product->category_id == $cat->id)>
+                                            @selected($product->category_id == $cat->id)>
                                         {{ $cat->translations->firstWhere('locale', app()->getLocale())?->name
                                             ?? $cat->translations->firstWhere('locale', 'az')?->name }}
                                     </option>
@@ -167,7 +188,7 @@
                                        name="is_featured"
                                        value="1"
                                        class="form-check-input"
-                                    @checked($product->is_featured)>
+                                        @checked($product->is_featured)>
                                 <label>Featured</label>
                             </div>
 
@@ -181,7 +202,7 @@
                                        name="is_discounted"
                                        value="1"
                                        class="form-check-input"
-                                    @checked($product->is_discounted)>
+                                        @checked($product->is_discounted)>
                                 <label>Discounted</label>
                             </div>
 

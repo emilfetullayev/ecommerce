@@ -123,6 +123,13 @@
                             @enderror
 
                             <input type="text" name="discount_price" class="form-control mb-1" placeholder="Discount price">
+                            <input type="number"
+                                   name="stock"
+                                   min="0"
+                                   step="1"
+                                   value="{{ old('stock') }}"
+                                   class="form-control mb-2"
+                                   placeholder="Məs: 50 (0 = stokda yoxdur)">
 
 
                             {{-- CATEGORY --}}
@@ -186,6 +193,7 @@
                                     Endirimdədir
                                 </label>
                             </div>
+
 
                             {{-- IMAGES --}}
                             <input type="file"
